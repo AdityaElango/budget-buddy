@@ -1,0 +1,390 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
+
+/* ==================== COLOR PALETTE (Professional Fintech) ==================== */
+/* Primary: #2563EB, #1E40AF */
+/* Background: #F8FAFC, #EEF2F7, #FFFFFF */
+/* Text: #0F172A, #334155, #64748B */
+
+/* ==================== MAIN CONTAINER ==================== */
+.main_about {
+  width: 100%;
+  background: #f8fafc;
+  padding: 0;
+}
+
+/* ==================== 3️⃣ HERO SECTION (Professional & Clean) ==================== */
+.hero_section {
+  background: linear-gradient(135deg, #0b1224 0%, #1e3a8a 50%, #2563eb 100%);
+  color: #ffffff;
+  padding: 80px 24px;
+  text-align: center;
+  min-height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero_content {
+  max-width: 600px;
+}
+
+.main_heading {
+  font-size: 42px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 16px 0;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.hero_subtitle {
+  font-size: 16px;
+  color: #e5e7eb;
+  margin: 0 0 40px 0;
+  line-height: 1.6;
+  font-weight: 400;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ==================== 4️⃣ BUTTON HIERARCHY (Clear Primary/Secondary) ==================== */
+.hero_actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  text-decoration: none;
+  padding: 12px 32px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Primary Action: Get Started */
+.btn_primary {
+  background: #ffffff;
+  color: #1e40af;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+}
+
+.btn_primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.25);
+}
+
+.btn_primary:active {
+  transform: translateY(0);
+}
+
+/* Secondary Action: Login */
+.btn_secondary {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.btn_secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.btn_secondary:active {
+  transform: translateY(0);
+}
+
+/* Trust badges add credibility under CTA */
+.trust_badges {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.trust_badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: #e5e7eb;
+  backdrop-filter: blur(6px);
+}
+
+.badge_icon {
+  font-size: 18px;
+}
+
+.badge_label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ==================== 5️⃣ SECTION TRANSITION (Soft Change) ==================== */
+.about {
+  background: #ffffff;
+  margin: 96px auto 0 auto;
+  padding: 80px 24px;
+  border-top: 1px solid #e2e8f0;
+  max-width: 1400px;
+}
+
+.images-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.left-image,
+.right-image {
+  width: 200px;
+  height: 200px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  flex-shrink: 0;
+}
+
+.text-content {
+  flex: 1;
+}
+
+.text-content h2 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 40px 0;
+  line-height: 1.2;
+}
+
+/* How it works strip */
+.how_strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+.step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+}
+
+.step_icon {
+  font-size: 18px;
+}
+
+.step_title {
+  margin: 0 0 4px 0;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.step_copy {
+  margin: 0;
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.5;
+}
+
+/* ==================== 6️⃣ FEATURE CARDS (Lighter, Less Boxy) ==================== */
+.feature-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+}
+
+.feature-item {
+  padding: 28px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.feature-item:hover {
+  background: #f1f5f9;
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+  border-color: #cbd5e1;
+}
+
+.feature-icon {
+  font-size: 32px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.feature-item h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+}
+
+.feature-item p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ==================== 7️⃣ TYPOGRAPHY CONSISTENCY ==================== */
+body {
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
+  color: #334155;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
+  color: #0f172a;
+}
+
+/* ==================== 9️⃣ WHITE SPACE DISCIPLINE ==================== */
+/* Section padding: 80–96px */
+/* Card padding: 24–28px */
+/* Button gaps: 12–16px */
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 1024px) {
+  .images-content {
+    gap: 40px;
+  }
+
+  .left-image,
+  .right-image {
+    width: 180px;
+    height: 180px;
+  }
+
+  .feature-list {
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero_section {
+    padding: 60px 20px;
+  }
+
+  .main_heading {
+    font-size: 28px;
+  }
+
+  .hero_subtitle {
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  .hero_actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .about {
+    margin: 64px auto 0 auto;
+    padding: 60px 20px;
+  }
+
+  .images-content {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .left-image,
+  .right-image {
+    width: 160px;
+    height: 160px;
+  }
+
+  .text-content h2 {
+    font-size: 24px;
+    margin-bottom: 28px;
+  }
+
+  .feature-list {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .feature-item {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero_section {
+    padding: 48px 16px;
+  }
+
+  .main_heading {
+    font-size: 24px;
+  }
+
+  .hero_subtitle {
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+
+  .trust_badges {
+    grid-template-columns: 1fr;
+  }
+
+  .btn {
+    padding: 10px 24px;
+    font-size: 14px;
+    height: 40px;
+  }
+
+  .about {
+    padding: 40px 16px;
+  }
+
+  .text-content h2 {
+    font-size: 20px;
+  }
+
+  .feature-item {
+    padding: 20px;
+  }
+
+  .feature-item h3 {
+    font-size: 15px;
+  }
+
+  .feature-item p {
+    font-size: 13px;
+  }
+}
+
