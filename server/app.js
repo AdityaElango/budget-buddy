@@ -35,10 +35,15 @@ app.use(cookieParser());
 // Allows frontend (React app) to communicate with backend
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:3001"], // Allowed origins
-    credentials: true, // Allow cookies to be sent
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://budgetbuddyfinance.netlify.app"
+    ],
+    credentials: true,
   })
 );
+
 
 // ============================================
 // API ROUTES
