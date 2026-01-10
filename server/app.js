@@ -38,11 +38,12 @@ app.use(
     origin: [
       "http://localhost:3000",
       "http://localhost:3001",
-      "https://budgetbuddyfinance.netlify.app"
+      "https://budgetbuddyfinance.netlify.app",
     ],
-    credentials: true,
+    credentials: false,
   })
 );
+
 
 
 // ============================================
