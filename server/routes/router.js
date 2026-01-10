@@ -3,90 +3,13 @@ const router = new express.Router();
 const userdb = require("../models/userSchema");
 const bcrypt = require("bcryptjs");
 const authenticate = require("../middleware/authenticate")
+const { signupCtrl, loginCtrl } = require("../controllers/authCtrl");
+
 
 //for user registration
-
-router.post("/signup", async(req,res) =>{
-        const {fname,email,password,cpassword} = req.body;
-   
-        if(!fname || !email || !password || !cpassword)
-        {
-             return res.status(422).json({error:"Fill All Details"})
-        }
-   
-        try{
-   
-             const preuser = await userdb.findOne({email:email});
-   
-             if(preuser){
-                  return res.status(422).json({error:"This Email Already Exist"})
-             }else if(password !== cpassword){
-                  return res.status(422).json({error:"Password and Confirm password Not Match"})
-             }else{
-                  const finalUser = new userdb({
-                       fname,email,password,cpassword
-                  });
-   
-                  // here password hashing
-   
-                  const storeData = await finalUser.save();
-   
-                  //console.log(storeData);
-   
-                  return res.status(201).json({status:201,storeData})
-             }
-        } catch(error){
-             return res.status(422).json({error: error.message || "Error during signup"});
-        }
-        
-});
-
-
-//for Login
-
-router.post("/login",async(req,res)=>{
-     //console.log(req.body);
-     const {email,password} = req.body;
-
-     if(!email || !password)
-     {
-          return res.status(422).json({error:"Fill All Details"})
-     }
-
-     try{
-          const userValid = await userdb.findOne({email:email});
-
-          if (userValid){
-               const isMatch = await bcrypt.compare(password,userValid.password)
-
-               if(!isMatch){
-                    return res.status(422).json({error: "Invalid details"})
-               }else{
-                    // token generate
-                     const token = await userValid.generateAuthtoken();
-                     
-
-                    // cookie generator with cross-site support for dev
-                    res.cookie("usercookie", token,{
-                         expires: new Date(Date.now()+9000000),
-                         httpOnly: true,
-                         sameSite: 'None',
-                         secure: true
-                    });
-
-                    const result = {
-                         userValid,
-                         token
-                    }
-                    return res.status(201).json({status:201,result})
-               }
-          }else{
-               return res.status(422).json({error: "Invalid details"})
-          }
-     }catch(error){
-          return res.status(401).json({error: error.message || "Login error"});
-     }
-});
+// AUTH ROUTES
+router.post("/signup", signupCtrl);
+router.post("/login", loginCtrl);
 
 router.get("/validuser",authenticate,async(req,res)=>{
      try{
