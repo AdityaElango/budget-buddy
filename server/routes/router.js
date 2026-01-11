@@ -3,13 +3,14 @@ const router = new express.Router();
 const userdb = require("../models/userSchema");
 const bcrypt = require("bcryptjs");
 const authenticate = require("../middleware/authenticate")
-const { signupCtrl, loginCtrl } = require("../controllers/authCtrl");
+const { signupCtrl, loginCtrl, deleteUserCtrl } = require("../controllers/authCtrl");
 
 
 //for user registration
 // AUTH ROUTES
 router.post("/signup", signupCtrl);
 router.post("/login", loginCtrl);
+router.delete("/delete-user", deleteUserCtrl); // Temporary cleanup endpoint
 
 router.get("/validuser",authenticate,async(req,res)=>{
      try{

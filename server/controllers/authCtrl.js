@@ -75,4 +75,24 @@ const loginCtrl = expressAsyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { signupCtrl, loginCtrl };
+// ================= DELETE USER (for testing/cleanup) =================
+const deleteUserCtrl = expressAsyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+
+  const user = await User.findOneAndDelete({ email });
+  
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  res.status(200).json({
+    status: 200,
+    message: "User deleted successfully",
+  });
+});
+
+module.exports = { signupCtrl, loginCtrl, deleteUserCtrl };
