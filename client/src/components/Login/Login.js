@@ -89,21 +89,24 @@ const Login = () => {
         // Validate user and update context so ProtectedRoute works
         try {
           const userData = await validateUserApi();
-          if (userData?.status === 201) {
+          if (userData?.status === 201 && userData?.ValidUserOne) {
             setLoginData(userData);
+            showToast("Logged in successfully","success");
+            setInpval({...inpval,email:"", password:""});
+            
+            // Small delay to ensure context is updated
+            setTimeout(() => {
+              history("/dash");
+            }, 100);
+          } else {
+            throw new Error("User validation failed");
           }
         } catch (validationErr) {
           console.error("Validation error:", validationErr);
+          setError("Login validation failed. Please try again.");
+          showToast("Login validation failed","error");
+          localStorage.removeItem("usersdatatoken");
         }
-        
-        showToast("Logged in successfully","success");
-        setInpval({...inpval,email:"", password:""});
-        
-        // Small delay to ensure context is updated
-        setTimeout(() => {
-          history("/dash");
-        }, 100);
-        setInpval({...inpval,email:"", password:""});
       } else {
         const errorMsg = res.error || res.message || "Login failed";
         setError(errorMsg);
