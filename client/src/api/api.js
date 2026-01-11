@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = process.env.REACT_APP_API_URL || "https://budget-buddy-k52t.onrender.com";
+const BASE_URL = process.env.REACT_APP_API_URL || "https://budget-buddy-k52t.onrender.com/api";
 
 // Export BASE_URL for use in legacy fetch calls
 export const API_BASE_URL = BASE_URL;
