@@ -40,7 +40,7 @@ app.use(
       "http://localhost:3001",
       "https://budgetbuddyfinance.netlify.app",
     ],
-    credentials: false,
+    credentials: true,
   })
 );
 
