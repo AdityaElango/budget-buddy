@@ -5,6 +5,11 @@ import { ToastContext } from "../Toast/ToastProvider";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../api/api";
 
+const authHeaders = () => ({
+  "Content-Type": "application/json",
+  Authorization: localStorage.getItem("usersdatatoken") || "",
+});
+
 const Recurring = () => {
   const { logindata, setLoginData } = useContext(LoginContext);
   const { showToast } = useContext(ToastContext);
@@ -32,11 +37,7 @@ const Recurring = () => {
     let token = localStorage.getItem("usersdatatoken");
     const res = await fetch(`${API_BASE_URL}/validuser`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-      credentials: "include",
+      headers: authHeaders(),
     });
 
     const data = await res.json();
@@ -53,7 +54,10 @@ const Recurring = () => {
       if (!userId) return;
 
       const response = await fetch(
-        `${API_BASE_URL}/recurring/user/${userId}`
+        `${API_BASE_URL}/recurring/user/${userId}`,
+        {
+          headers: authHeaders(),
+        }
       );
       const data = await response.json();
       setRecurringList(data);
@@ -114,9 +118,7 @@ const Recurring = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/recurring`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: authHeaders(),
         body: JSON.stringify({
           ...formData,
           user: logindata.ValidUserOne._id,
@@ -147,6 +149,7 @@ const Recurring = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/recurring/${id}`, {
         method: "DELETE",
+        headers: authHeaders(),
       });
       if (!response.ok) throw new Error("Failed to delete");
       showToast("Recurring transaction deleted", "success");
@@ -160,9 +163,7 @@ const Recurring = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/recurring/${id}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: authHeaders(),
         body: JSON.stringify({ isActive: !currentStatus }),
       });
       if (!response.ok) throw new Error("Failed to update");

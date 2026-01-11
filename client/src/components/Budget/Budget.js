@@ -5,6 +5,11 @@ import { DateContext, LoginContext } from "../Context/Context";
 import { API_BASE_URL } from "../../api/api";
 import { ToastContext } from "../Toast/ToastProvider";
 
+const authHeaders = () => ({
+  "Content-Type": "application/json",
+  Authorization: localStorage.getItem("usersdatatoken") || "",
+});
+
 const getProgressBarVariant = (amount, max) => {
   const ratio = amount / max;
   if (ratio < 0.7) return "primary";
@@ -46,11 +51,7 @@ const Budget = () => {
 
     const res = await fetch(`${API_BASE_URL}/validuser`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-      credentials: "include",
+      headers: authHeaders(),
     });
 
     const data = await res.json();
@@ -68,10 +69,10 @@ const Budget = () => {
       const userId = logindata?.ValidUserOne?._id;
       if (!userId) return;
 
-      const budgetsResponse = await fetch(`${API_BASE_URL}/budget/user/${userId}`);
+      const budgetsResponse = await fetch(`${API_BASE_URL}/budget/user/${userId}`, { headers: authHeaders() });
       const budgets = await budgetsResponse.json();
       
-      const expensesResponse = await fetch(`${API_BASE_URL}/expense/user/${userId}`);
+      const expensesResponse = await fetch(`${API_BASE_URL}/expense/user/${userId}`, { headers: authHeaders() });
       const expenses = await expensesResponse.json();
 
       const updatedBudgets = budgets.map((budget) => {
@@ -148,9 +149,7 @@ const Budget = () => {
       try{
         const allexpense = await fetch(`${API_BASE_URL}/expense/user/${logindata.ValidUserOne._id}/${category}`, {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: authHeaders(),
         });
         const all = await allexpense.json();
         const totalExpense = all
@@ -170,9 +169,7 @@ const Budget = () => {
        
       const data = await fetch(`${API_BASE_URL}/budget`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: authHeaders(),
           body: JSON.stringify({
             category,
             budget,
