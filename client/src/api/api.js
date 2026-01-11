@@ -7,5 +7,7 @@ const api = axios.create({
   },
 });
 
+export const API_BASE_URL = "https://budget-buddy-k52t.onrender.com";
+
 export default api;
  
