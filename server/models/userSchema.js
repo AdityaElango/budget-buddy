@@ -48,10 +48,14 @@ const userSchema = new mongoose.Schema({
 {timestamps: true}
 );
 
-// hash password
+// hash password - only hash if not already hashed
 userSchema.pre("save", async function(next){
-    if(this.isModified("password") && this.password.length < 60){
-        this.password = await bcrypt.hash(this.password, 12);
+    // Only hash if password was modified AND is not already a bcrypt hash (hashes are 60 chars)
+    if(this.isModified("password")) {
+        // Check if password is already hashed (bcrypt hashes are always 60 characters starting with $2a, $2b, or $2y)
+        if(!this.password.startsWith("$2a") && !this.password.startsWith("$2b") && !this.password.startsWith("$2y")) {
+            this.password = await bcrypt.hash(this.password, 12);
+        }
     }
     next()
 });
