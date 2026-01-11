@@ -39,6 +39,7 @@ app.use(
       "http://localhost:3000",
       "http://localhost:3001",
       "https://budgetbuddyfinance.netlify.app",
+      "https://budgetbuddyfinancenow.vercel.app",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
