@@ -20,11 +20,14 @@ const signupCtrl = expressAsyncHandler(async (req, res) => {
     return res.status(409).json({ message: "User already exists" });
   }
 
-  const user = await User.create({
+  // Create a new user instance and save it to trigger pre-save hooks
+  const newUser = new User({
     fname,
     email,
     password: password,
   });
+
+  const user = await newUser.save();
 
   res.status(201).json({
     status: 201,
