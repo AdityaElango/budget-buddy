@@ -97,7 +97,12 @@ const Login = () => {
         }
         
         showToast("Logged in successfully","success");
-        history("/dash");
+        setInpval({...inpval,email:"", password:""});
+        
+        // Small delay to ensure context is updated
+        setTimeout(() => {
+          history("/dash");
+        }, 100);
         setInpval({...inpval,email:"", password:""});
       } else {
         const errorMsg = res.error || res.message || "Login failed";
