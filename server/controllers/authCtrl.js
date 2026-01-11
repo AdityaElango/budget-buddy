@@ -20,11 +20,13 @@ const signupCtrl = expressAsyncHandler(async (req, res) => {
     return res.status(409).json({ message: "User already exists" });
   }
 
-  // Create a new user instance and save it to trigger pre-save hooks
+  // Hash password before saving
+  const hashedPassword = await bcrypt.hash(password, 12);
+
   const newUser = new User({
     fname,
     email,
-    password: password,
+    password: hashedPassword,
   });
 
   const user = await newUser.save();
