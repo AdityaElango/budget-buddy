@@ -9,5 +9,14 @@ const api = axios.create({
 
 export const API_BASE_URL = "https://budget-buddy-k52t.onrender.com/api";
 
+// Attach bearer token if present
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("usersdatatoken");
+  if (token) {
+    config.headers["Authorization"] = token;
+  }
+  return config;
+});
+
 export default api;
  

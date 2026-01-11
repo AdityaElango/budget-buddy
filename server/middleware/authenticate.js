@@ -5,11 +5,16 @@ const keysecret = process.env.JWT_SECRET || "sdeivanaiananyaparikshithadityae"
 
 const authenticate = async(req,res,next)=>{
     try{
-        const token = req.cookies.usercookie;
+        // Check for token in Authorization header or cookie
+        const token = req.headers.authorization || req.cookies.usercookie;
+        
+        if (!token) {
+            return res.status(401).json({status:401,message:"Unauthorized no token provided"});
+        }
         
         const verifytoken = jwt.verify(token,keysecret);
         
-        const rootUser = await userdb.findOne({_id:verifytoken._id});
+        const rootUser = await userdb.findOne({_id:verifytoken._id || verifytoken.id});
         
         if(!rootUser){throw new Error("user not found")}
 
