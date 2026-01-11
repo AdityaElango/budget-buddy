@@ -56,8 +56,10 @@ const Accounts = () => {
   };
 
   useEffect(() => {
-    AccountValid();
-  }, []);
+    if (!logindata?.ValidUserOne) {
+      AccountValid();
+    }
+  }, [logindata?.ValidUserOne]);
 
 
   const [formData, setFormData] = useState({

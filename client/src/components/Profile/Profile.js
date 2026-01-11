@@ -18,6 +18,17 @@ const Profile = () => {
   });
 
   useEffect(() => {
+    if (logindata?.ValidUserOne) {
+      setFormData({
+        fname: logindata.ValidUserOne.fname || "",
+        lname: logindata.ValidUserOne.lname || "",
+        email: logindata.ValidUserOne.email || "",
+        phone: logindata.ValidUserOne.phone || "",
+      });
+      setLoading(false);
+      return;
+    }
+
     const validateUser = async () => {
       try {
         const token = localStorage.getItem("usersdatatoken");
@@ -52,7 +63,7 @@ const Profile = () => {
     };
 
     validateUser();
-  }, [navigate, setLoginData]);
+  }, [navigate, setLoginData, logindata?.ValidUserOne]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

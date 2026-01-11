@@ -3,7 +3,7 @@ import "./Analysis.css";
 import { useNavigate } from "react-router-dom";
 import { DateContext, LoginContext } from "../Context/Context";
 import { exportMonthlySummary } from "../../utils/exportUtils";
-import { API_BASE_URL } from "../../api/api";
+import { API_BASE_URL, cachedGet } from "../../api/api";
 import { detectAnomalies, generateAnomalyInsights, compareMonths } from "../../utils/anomalyDetection";
 import {
   LineChart,
@@ -412,11 +412,8 @@ const Analysis = () => {
 
   const allTransactions = async () => {
     try {
-      const expenseResponse = await fetch(`${API_BASE_URL}/expense/user/${logindata.ValidUserOne._id}`, { headers: authHeaders() });
-      const incomeResponse = await fetch(`${API_BASE_URL}/income/user/${logindata.ValidUserOne._id}`, { headers: authHeaders() });
-
-      const expenseData = await expenseResponse.json();
-      const incomeData = await incomeResponse.json();
+      const expenseData = await cachedGet(`/expense/user/${logindata.ValidUserOne._id}`, {}, { ttl: 5 * 60 * 1000 });
+      const incomeData = await cachedGet(`/income/user/${logindata.ValidUserOne._id}`, {}, { ttl: 5 * 60 * 1000 });
       const isInPeriod = (dateStr) => {
         const d = new Date(dateStr);
         return d.getMonth() + 1 === selectedMonth && d.getFullYear() === selectedYear;
@@ -500,8 +497,10 @@ const Analysis = () => {
 
 
   useEffect(() => {
-    AnalysisValid();
-  }, [AnalysisValid]);
+    if (!logindata?.ValidUserOne) {
+      AnalysisValid();
+    }
+  }, [logindata?.ValidUserOne]);
 
   useEffect(() => {
     if (!logindata?.ValidUserOne) return;

@@ -9,7 +9,7 @@ import { exportMonthlySummary } from "../../utils/exportUtils";
 import { addExpense as addExpenseApi } from "../../api/expenseApi";
 import { addIncome as addIncomeApi } from "../../api/incomeApi";
 import { getHealthScore as getHealthScoreApi } from "../../api/healthApi";
-import { API_BASE_URL } from "../../api/api";
+import { API_BASE_URL, cachedGet } from "../../api/api";
 
 const authHeaders = () => ({
   "Content-Type": "application/json",
@@ -152,13 +152,20 @@ const Dashboard = () => {
       // Add new expense
       if (description && amount && date && accountType && category) {
         try {
+          const userId = logindata?.ValidUserOne?._id;
+          if (!userId) {
+            showToast("User not authenticated. Please login again.", "error");
+            setSubmitting(false);
+            return;
+          }
+
           const payload = {
             category,
             amount: parseFloat(amount),
             description,
             date,
             account: accountType,
-            user: logindata?.ValidUserOne?._id,
+            user: userId,
           };
           console.log("Adding expense with payload:", payload);
           const result = await addExpenseApi(payload);
@@ -220,13 +227,20 @@ const Dashboard = () => {
       // Add new income
       if (description && amount && date && accountType && category) {
         try {
+          const userId = logindata?.ValidUserOne?._id;
+          if (!userId) {
+            showToast("User not authenticated. Please login again.", "error");
+            setSubmitting(false);
+            return;
+          }
+
           const payload = {
             category,
             amount: parseFloat(amount),
             description,
             date,
             account: accountType,
-            user: logindata?.ValidUserOne?._id,
+            user: userId,
           };
           console.log("Adding income with payload:", payload);
           const result = await addIncomeApi(payload);
@@ -276,14 +290,11 @@ const Dashboard = () => {
         accountBalances.map(async (entry) => {
           const { accountType: acc } = entry;
 
-          const expenseResponse = await fetch(
-            `${API_BASE_URL}/expense/useracc/${userId}/${acc}`,
-            {
-              method: "GET",
-              headers: authHeaders(),
-            }
+          const expenseData = await cachedGet(
+            `/expense/useracc/${userId}/${acc}`,
+            {},
+            { ttl: 2 * 60 * 1000 }
           );
-          const expenseData = await expenseResponse.json();
           const totalExpense = expenseData
             .filter((expense) => {
               const d = new Date(expense.date);
@@ -293,14 +304,11 @@ const Dashboard = () => {
             })
             .reduce((sum, expense) => sum + expense.amount, 0);
 
-          const incomeResponse = await fetch(
-            `${API_BASE_URL}/income/useracc/${userId}/${acc}`,
-            {
-              method: "GET",
-              headers: authHeaders(),
-            }
+          const incomeData = await cachedGet(
+            `/income/useracc/${userId}/${acc}`,
+            {},
+            { ttl: 2 * 60 * 1000 }
           );
-          const incomeData = await incomeResponse.json();
           const totalIncome = incomeData
             .filter((income) => {
               const d = new Date(income.date);
@@ -354,17 +362,8 @@ const Dashboard = () => {
         return;
       }
 
-      const expenseResponse = await fetch(
-        `${API_BASE_URL}/expense/user/${userId}`,
-        { headers: authHeaders() }
-      );
-      const incomeResponse = await fetch(
-        `${API_BASE_URL}/income/user/${userId}`,
-        { headers: authHeaders() }
-      );
-
-      const expenseData = await expenseResponse.json();
-      const incomeData = await incomeResponse.json();
+      const expenseData = await cachedGet(`/expense/user/${userId}`, {}, { ttl: 5 * 60 * 1000 });
+      const incomeData = await cachedGet(`/income/user/${userId}`, {}, { ttl: 5 * 60 * 1000 });
 
       setAllExpenseData(expenseData);
       setAllIncomeData(incomeData);
