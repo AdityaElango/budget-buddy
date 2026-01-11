@@ -11,6 +11,11 @@ import { addIncome as addIncomeApi } from "../../api/incomeApi";
 import { getHealthScore as getHealthScoreApi } from "../../api/healthApi";
 import { API_BASE_URL } from "../../api/api";
 
+const authHeaders = () => ({
+  "Content-Type": "application/json",
+  Authorization: localStorage.getItem("usersdatatoken") || "",
+});
+
 const Dashboard = () => {
   const getToday = () => new Date().toISOString().split("T")[0];
   const [description, setDescription] = useState("");
@@ -269,9 +274,7 @@ const Dashboard = () => {
             `${API_BASE_URL}/expense/useracc/${userId}/${acc}`,
             {
               method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
+              headers: authHeaders(),
             }
           );
           const expenseData = await expenseResponse.json();
@@ -288,9 +291,7 @@ const Dashboard = () => {
             `${API_BASE_URL}/income/useracc/${userId}/${acc}`,
             {
               method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
+              headers: authHeaders(),
             }
           );
           const incomeData = await incomeResponse.json();
@@ -348,10 +349,12 @@ const Dashboard = () => {
       }
 
       const expenseResponse = await fetch(
-        `${API_BASE_URL}/expense/user/${userId}`
+        `${API_BASE_URL}/expense/user/${userId}`,
+        { headers: authHeaders() }
       );
       const incomeResponse = await fetch(
-        `${API_BASE_URL}/income/user/${userId}`
+        `${API_BASE_URL}/income/user/${userId}`,
+        { headers: authHeaders() }
       );
 
       const expenseData = await expenseResponse.json();

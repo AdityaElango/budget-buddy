@@ -383,6 +383,11 @@ const Analysis = () => {
   const [prevMonthData, setPrevMonthData] = useState(null);
   const [anomalies, setAnomalies] = useState([]);
 
+  const authHeaders = () => ({
+    "Content-Type": "application/json",
+    Authorization: localStorage.getItem("usersdatatoken") || "",
+  });
+
   const AnalysisValid = async () => {
     let token = localStorage.getItem("usersdatatoken");
 
@@ -407,8 +412,8 @@ const Analysis = () => {
 
   const allTransactions = async () => {
     try {
-      const expenseResponse = await fetch(`${API_BASE_URL}/expense/user/${logindata.ValidUserOne._id}`);
-      const incomeResponse = await fetch(`${API_BASE_URL}/income/user/${logindata.ValidUserOne._id}`);
+      const expenseResponse = await fetch(`${API_BASE_URL}/expense/user/${logindata.ValidUserOne._id}`, { headers: authHeaders() });
+      const incomeResponse = await fetch(`${API_BASE_URL}/income/user/${logindata.ValidUserOne._id}`, { headers: authHeaders() });
 
       const expenseData = await expenseResponse.json();
       const incomeData = await incomeResponse.json();
