@@ -160,6 +160,7 @@ const Dashboard = () => {
             account: accountType,
             user: logindata?.ValidUserOne?._id,
           };
+          console.log("Adding expense with payload:", payload);
           const result = await addExpenseApi(payload);
           if (result?.error) throw new Error(result.error || "Failed to add expense");
 
@@ -178,7 +179,9 @@ const Dashboard = () => {
           resetForm();
           showToast("Expense added","success");
         } catch (err) {
-          showToast(err.message || "Error adding expense","error");
+          console.error("Error adding expense:", err);
+          const errorMsg = err?.error || err?.message || "Error adding expense";
+          showToast(errorMsg, "error");
         } finally {
           setSubmitting(false);
         }
@@ -225,6 +228,7 @@ const Dashboard = () => {
             account: accountType,
             user: logindata?.ValidUserOne?._id,
           };
+          console.log("Adding income with payload:", payload);
           const result = await addIncomeApi(payload);
           if (result?.error) throw new Error(result.error || "Failed to add income");
 
@@ -243,7 +247,9 @@ const Dashboard = () => {
           resetForm();
           showToast("Income added","success");
         } catch (err) {
-          showToast(err.message || "Error adding income","error");
+          console.error("Error adding income:", err);
+          const errorMsg = err?.error || err?.message || "Error adding income";
+          showToast(errorMsg, "error");
         } finally {
           setSubmitting(false);
         }
