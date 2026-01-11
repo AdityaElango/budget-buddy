@@ -38,8 +38,8 @@ const userSchema = new mongoose.Schema({
     },
     cpassword:{
         type: String,
-        required:true,
-        minlength:6
+        minlength:6,
+        default: ""
     },
     tokens:[
         {
