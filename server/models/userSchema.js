@@ -36,11 +36,6 @@ const userSchema = new mongoose.Schema({
         required:true,
         minlength:6
     },
-    cpassword:{
-        type: String,
-        minlength:6,
-        default: ""
-    },
     tokens:[
         {
             token:{
