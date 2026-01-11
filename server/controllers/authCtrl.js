@@ -20,13 +20,10 @@ const signupCtrl = expressAsyncHandler(async (req, res) => {
     return res.status(409).json({ message: "User already exists" });
   }
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
   const user = await User.create({
     fname,
     email,
-    password: hashedPassword,
+    password: password,
   });
 
   res.status(201).json({
