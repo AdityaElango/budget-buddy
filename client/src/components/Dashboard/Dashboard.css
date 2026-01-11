@@ -521,6 +521,10 @@ body.dark-mode .field-error {
   }
 
   .dashboard-container {
+    width: 100%;
+  }
+
+  .dashboard-container {
     gap: 16px;
   }
 
@@ -560,6 +564,7 @@ body.dark-mode .field-error {
 
   .dashboard-container {
     gap: 12px;
+    width: 100%;
   }
 
   .overview-box {
@@ -585,6 +590,16 @@ body.dark-mode .field-error {
   .table_fill td {
     padding: 8px 10px;
     font-size: 12px;
+  }
+
+  /* Health + breakdown stacking on very small screens */
+  .health-breakdown {
+    grid-template-columns: 1fr;
+  }
+
+  /* Keep tables usable on narrow phones */
+  .table_box {
+    margin: 0 -4px;
   }
 }
 
