@@ -154,7 +154,7 @@ const Dashboard = () => {
         try {
           const payload = {
             category,
-            amount,
+            amount: parseFloat(amount),
             description,
             date,
             account: accountType,
@@ -219,7 +219,7 @@ const Dashboard = () => {
         try {
           const payload = {
             category,
-            amount,
+            amount: parseFloat(amount),
             description,
             date,
             account: accountType,
