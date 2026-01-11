@@ -2,7 +2,8 @@ import React,{useState, useEffect, useContext, useRef, useMemo} from 'react';
 import {Link , useNavigate} from "react-router-dom";
 import "./login.css";
 import { ToastContext } from "../Toast/ToastProvider";
-import { login as loginApi } from "../../api/authApi";
+import { LoginContext } from "../Context/Context";
+import { login as loginApi, validateUser as validateUserApi } from "../../api/authApi";
 
 const Login = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -10,6 +11,7 @@ const Login = () => {
 
   const history = useNavigate();
   const { showToast } = useContext(ToastContext);
+  const { setLoginData } = useContext(LoginContext);
 
   const [passShow, setPassShow] = useState(false);
   const [error, setError] = useState(false);
@@ -82,10 +84,21 @@ const Login = () => {
       if(res.status === 201){
         // Remember email for next login
         localStorage.setItem('rememberedEmail', email);
-        localStorage.setItem("usersdatatoken", res.result.token)
+        localStorage.setItem("usersdatatoken", res.result.token);
+        
+        // Validate user and update context so ProtectedRoute works
+        try {
+          const userData = await validateUserApi();
+          if (userData?.status === 201) {
+            setLoginData(userData);
+          }
+        } catch (validationErr) {
+          console.error("Validation error:", validationErr);
+        }
+        
         showToast("Logged in successfully","success");
-        history("/dash")
-        setInpval({...inpval,email:"", password:""})
+        history("/dash");
+        setInpval({...inpval,email:"", password:""});
       } else {
         const errorMsg = res.error || res.message || "Login failed";
         setError(errorMsg);
