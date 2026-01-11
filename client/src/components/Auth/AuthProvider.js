@@ -45,7 +45,7 @@ const AuthProvider = ({ children }) => {
         setBootstrapping(false);
       }
     })();
-  }, [setLoginData, navigate, location.pathname]);
+  }, [setLoginData, navigate]); // Removed location.pathname dependency
 
   // Prevent rendering of protected routes during token validation
   const hasToken = !!localStorage.getItem("usersdatatoken");
