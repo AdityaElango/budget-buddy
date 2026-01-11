@@ -2,11 +2,13 @@ import React,{useState, useContext, useEffect, useRef, useMemo} from 'react';
 import "./signup.css";
 import {Link, useNavigate} from "react-router-dom";
 import { ToastContext } from "../Toast/ToastProvider";
-import { signup as signupApi, login as loginApi } from "../../api/authApi";
+import { LoginContext } from "../Context/Context";
+import { signup as signupApi, login as loginApi, validateUser as validateUserApi } from "../../api/authApi";
 
 const Signup = () => {
   const history = useNavigate();
   const { showToast } = useContext(ToastContext);
+  const { setLoginData } = useContext(LoginContext);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const MIN_PASSWORD_LENGTH = 6;
@@ -116,6 +118,17 @@ const Signup = () => {
           // Save email and token
           localStorage.setItem('rememberedEmail', email);
           localStorage.setItem("usersdatatoken", loginRes.result.token);
+          
+          // Validate user and update context so ProtectedRoute works
+          try {
+            const userData = await validateUserApi();
+            if (userData?.status === 201) {
+              setLoginData(userData);
+            }
+          } catch (validationErr) {
+            console.error("Validation error:", validationErr);
+          }
+          
           setInpval({...inpval,fname:"", email:"", password:"", cpassword:""})
           // Redirect to dashboard
           setTimeout(() => {
