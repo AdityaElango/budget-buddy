@@ -7,6 +7,7 @@ export const API_BASE_URL = BASE_URL;
 
 const api = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -38,3 +39,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+ 
