@@ -31,10 +31,14 @@ const pageTransition = {
 
 function App() {
   const location = useLocation();
+  
+  // Hide header on login and signup pages
+  const hideHeaderPaths = ['/login', '/signup'];
+  const shouldShowHeader = !hideHeaderPaths.includes(location.pathname);
 
   return (
     <>
-    <Header/>
+    {shouldShowHeader && <Header/>}
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={
