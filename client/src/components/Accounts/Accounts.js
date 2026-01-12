@@ -7,6 +7,11 @@ import { ToastContext } from "../Toast/ToastProvider";
 import { API_BASE_URL } from "../../api/api";
 import EmptyState from "../Common/EmptyState";
 
+const authHeaders = () => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${localStorage.getItem("usersdatatoken") || ""}`,
+});
+
 const Accounts = () => {
   const history = useNavigate();
 
