@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "BudgetBuddy",
+  "name": "BudgetBuddy - Personal Finance Manager",
+  "description": "Smart financial management app with budgets, expense tracking, and insights",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,18 +9,61 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "logo_icon.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any"
     },
     {
-      "src": "logo512.png",
+      "src": "logo_icon.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/dash",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "scope": "/",
+  "theme_color": "#2563eb",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "screenshots": [
+    {
+      "src": "logo_icon.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "logo_icon.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "categories": ["finance", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your financial dashboard",
+      "url": "/dash",
+      "icons": [{ "src": "logo_icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Add Transaction",
+      "short_name": "Transaction",
+      "description": "Add new expense or income",
+      "url": "/transaction",
+      "icons": [{ "src": "logo_icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Analysis",
+      "short_name": "Analysis",
+      "description": "View financial insights",
+      "url": "/analysis",
+      "icons": [{ "src": "logo_icon.png", "sizes": "192x192" }]
+    }
+  ]
 }
+

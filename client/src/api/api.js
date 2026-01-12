@@ -1,4 +1,5 @@
 import axios from "axios";
+import authService from "../services/authService";
 
 const api = axios.create({
   baseURL: "https://budget-buddy-k52t.onrender.com/api",
@@ -9,14 +10,48 @@ const api = axios.create({
 
 export const API_BASE_URL = "https://budget-buddy-k52t.onrender.com/api";
 
-// Attach bearer token if present
+// Request interceptor: Attach token and check expiry
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("usersdatatoken");
+  // Check if current token is expired
+  if (authService.checkTokenExpiry()) {
+    // Token was expired, user logged out
+    return Promise.reject(new Error("Token expired. Please login again."));
+  }
+
+  const token = localStorage.getItem("usersdatatoken") || authService.getToken();
   if (token) {
-    config.headers["Authorization"] = token;
+    config.headers["Authorization"] = `Bearer ${token}`;
   }
   return config;
 });
+
+// Response interceptor: Handle 401 and token refresh
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Handle 401 Unauthorized
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      // Try to refresh token
+      const refreshed = await authService.refreshToken();
+      if (refreshed) {
+        const token = authService.getToken();
+        originalRequest.headers["Authorization"] = `Bearer ${token}`;
+        return api(originalRequest);
+      } else {
+        // Refresh failed, logout user
+        authService.logout();
+        window.dispatchEvent(new Event("auth:logout"));
+        return Promise.reject(error);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 // -------------------------------------------------
 // Lightweight GET cache with TTL + request de-dupe
