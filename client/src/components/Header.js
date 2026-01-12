@@ -13,15 +13,9 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  const { logindata, setLoginData } = useContext(LoginContext);
+  const { logindata, setLoginData, isAuthenticated } = useContext(LoginContext);
   const { isDark, toggleTheme } = useContext(ThemeContext);
   const { selectedMonth, selectedYear, setSelectedMonth, setSelectedYear } = useContext(DateContext);
-
-  // Check if user is logged in
-  const isLoggedIn = logindata && logindata.ValidUserOne;
-  
-  // Check if current page is login or signup (pages where menu should be hidden)
-  const isAuthPage = ["/login", "/signup"].includes(location.pathname);
 
   const handleLogout = async () => {
     try {
@@ -58,7 +52,7 @@ const Header = () => {
 
   const handleLogoClick = () => {
     // If logged in, go to dashboard; otherwise go to about page
-    if (isLoggedIn) {
+    if (isAuthenticated) {
       navigate("/dash");
     } else {
       navigate("/");
@@ -83,17 +77,14 @@ const Header = () => {
   return (
     <header className="header">
       <nav className="navbar">
-        {/* Brand/Logo - Always visible */}
         <div className="brand" onClick={handleLogoClick} style={{ cursor: "pointer" }}>
           <img className="logo" src={logo} alt="BudgetBuddy" />
           <span className="brand-name">BudgetBuddy</span>
         </div>
 
         <div className="nav-content">
-          {/* Show full navigation only when logged in AND not on auth pages */}
-          {isLoggedIn && !isAuthPage ? (
+          {isAuthenticated ? (
             <>
-              {/* Period Controls (Month/Year Selector) */}
               <div className="period-controls" title="Time range applies across pages">
                 <select
                   aria-label="Select month"
@@ -119,7 +110,6 @@ const Header = () => {
                 </select>
               </div>
 
-              {/* Navigation Links */}
               <nav className={`nav-links ${mobileMenuOpen ? "active" : ""}`}>
                 {navItems.map((item) => (
                   <NavLink
@@ -135,13 +125,11 @@ const Header = () => {
                 ))}
               </nav>
 
-              {/* Right side controls - Theme, User Menu, Mobile Toggle */}
               <div className="nav-right">
                 <button className="theme-toggle" onClick={toggleTheme} title={isDark ? "Light mode" : "Dark mode"}>
                   {isDark ? '☀️' : '🌙'}
                 </button>
 
-                {/* User Menu with Avatar */}
                 <div className="user-menu">
                   <button 
                     className="user-avatar-btn" 
@@ -149,14 +137,14 @@ const Header = () => {
                     title="User Menu"
                   >
                     <Avatar className="user-avatar" style={{ background: "#2563eb", cursor: "pointer" }}>
-                      {logindata.ValidUserOne.fname[0].toUpperCase()}
+                      {logindata?.ValidUserOne?.fname?.[0]?.toUpperCase() || "U"}
                     </Avatar>
                   </button>
                   {userMenuOpen && (
                     <div className="user-dropdown">
                       <div className="user-info">
-                        <div className="user-name">{logindata.ValidUserOne.fname} {logindata.ValidUserOne.lname}</div>
-                        <div className="user-email">{logindata.ValidUserOne.email}</div>
+                        <div className="user-name">{logindata?.ValidUserOne?.fname} {logindata?.ValidUserOne?.lname}</div>
+                        <div className="user-email">{logindata?.ValidUserOne?.email}</div>
                       </div>
                       <hr className="dropdown-divider" />
                       <NavLink to="/profile" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
@@ -172,7 +160,6 @@ const Header = () => {
                   )}
                 </div>
 
-                {/* Mobile Menu Toggle */}
                 <button 
                   className="mobile-menu-toggle"
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -184,10 +171,17 @@ const Header = () => {
             </>
           ) : (
             <>
-              {/* Minimal header when not logged in - only theme toggle */}
               <button className="theme-toggle" onClick={toggleTheme} title={isDark ? "Light mode" : "Dark mode"}>
                 {isDark ? '☀️' : '🌙'}
               </button>
+              <div className="nav-actions">
+                <NavLink to="/login" className="btn btn-login">
+                  Login
+                </NavLink>
+                <NavLink to="/signup" className="btn btn-signup">
+                  Sign Up
+                </NavLink>
+              </div>
             </>
           )}
         </div>

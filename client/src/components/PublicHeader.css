@@ -1,0 +1,149 @@
+/* ==================== PUBLIC HEADER (LANDING/MARKETING) ==================== */
+
+.public-header {
+  height: 56px;
+  background: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  width: 100%;
+}
+
+.public-navbar {
+  width: 100%;
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ==================== BRAND (LEFT) ==================== */
+
+.public-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.public-brand:hover {
+  opacity: 0.9;
+}
+
+.public-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.public-brand-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+/* ==================== NAV ACTIONS (RIGHT) ==================== */
+
+.public-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.public-theme-toggle {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.public-theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.public-btn {
+  text-decoration: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  border: none;
+  cursor: pointer;
+}
+
+.public-btn-login {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.public-btn-login:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.public-btn-signup {
+  background: #ffffff;
+  color: #1e40af;
+}
+
+.public-btn-signup:hover {
+  background: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 640px) {
+  .public-navbar {
+    padding: 0 16px;
+  }
+
+  .public-brand-name {
+    font-size: 16px;
+  }
+
+  .public-logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  .public-nav-actions {
+    gap: 8px;
+  }
+
+  .public-btn {
+    padding: 6px 16px;
+    font-size: 13px;
+    height: 32px;
+  }
+
+  .public-theme-toggle {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+}

@@ -159,8 +159,8 @@ const Signup = () => {
     <section>
     <div className="form_data">
           <div className="form_heading">
-            <h1>Signup</h1>
-            <p className="subtitle">Create your account to start tracking expenses securely.</p>
+            <h1>Create Account</h1>
+            <p className="subtitle">Start your journey to better financial management</p>
           </div>
           <form onSubmit={addUserdata}>
           <div className="form_input">
@@ -236,10 +236,11 @@ const Signup = () => {
               {isLoading ? (
                 <span className="spinner"></span>
               ) : (
-                "Signup"
+                "Create Account"
               )}
             </button>
-            <p>Already have an account <Link to ="/login">Login</Link></p>
+            <p>Already have an account? <Link to ="/login">Login</Link></p>
+            <Link to="/" className="back-to-home">← Back to Home</Link>
           </form>
         </div>
     </section>

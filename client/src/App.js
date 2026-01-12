@@ -1,6 +1,7 @@
 import Header from "./components/Header"
-import React from 'react';
-import {Routes, Route, useLocation } from 'react-router-dom';
+import PublicHeader from "./components/PublicHeader"
+import React, { useContext } from 'react';
+import {Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import Login from "./components/Login/Login";
 import About from "./components/About/About";
@@ -15,6 +16,7 @@ import Goals from "./components/Goals/Goals";
 import Profile from "./components/Profile/Profile";
 import Error from "./components/Error"
 import ProtectedRoute from "./components/Common/ProtectedRoute";
+import { LoginContext } from "./components/Context/Context";
 
 // Page transition animation variants
 const pageVariants = {
@@ -31,14 +33,11 @@ const pageTransition = {
 
 function App() {
   const location = useLocation();
-  
-  // Hide header on login and signup pages
-  const hideHeaderPaths = ['/login', '/signup'];
-  const shouldShowHeader = !hideHeaderPaths.includes(location.pathname);
+  const { isAuthenticated } = useContext(LoginContext);
 
   return (
     <>
-    {shouldShowHeader && <Header/>}
+    {isAuthenticated ? <Header/> : <PublicHeader/>}
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={
@@ -53,26 +52,30 @@ function App() {
           </motion.div>
         }/>
         <Route path="/login" element={
-          <motion.div
-            initial="initial"
-            animate="in"
-            exit="out"
-            variants={pageVariants}
-            transition={pageTransition}
-          >
-            <Login/>
-          </motion.div>
+          isAuthenticated ? <Navigate to="/dash" replace /> : (
+            <motion.div
+              initial="initial"
+              animate="in"
+              exit="out"
+              variants={pageVariants}
+              transition={pageTransition}
+            >
+              <Login/>
+            </motion.div>
+          )
         }/>
         <Route path="/signup" element={
-          <motion.div
-            initial="initial"
-            animate="in"
-            exit="out"
-            variants={pageVariants}
-            transition={pageTransition}
-          >
-            <Signup/>
-          </motion.div>
+          isAuthenticated ? <Navigate to="/dash" replace /> : (
+            <motion.div
+              initial="initial"
+              animate="in"
+              exit="out"
+              variants={pageVariants}
+              transition={pageTransition}
+            >
+              <Signup/>
+            </motion.div>
+          )
         }/>
         <Route path="/dash" element={
           <motion.div

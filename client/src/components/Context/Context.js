@@ -33,8 +33,14 @@ const Context = ({ children }) => {
     [selectedMonth, selectedYear]
   );
 
+  // Single source of truth for auth state across app components
+  const isAuthenticated = useMemo(
+    () => Boolean(logindata && logindata.ValidUserOne && localStorage.getItem("usersdatatoken")),
+    [logindata]
+  );
+
   return (
-    <LoginContext.Provider value={{ logindata, setLoginData }}>
+    <LoginContext.Provider value={{ logindata, setLoginData, isAuthenticated }}>
       <ExpenseContext.Provider value={{ expensedata, setExpenseData }}>
         <DateContext.Provider value={dateValue}>
           {children}

@@ -126,7 +126,8 @@ const Login = () => {
     <section>
     <div className="form_data">
           <div className="form_heading">
-            <h1>Login</h1>
+            <h1>Welcome Back</h1>
+            <p>Login to continue to BudgetBuddy</p>
           </div>
           <form onSubmit={loginuser}>
             <div className="form_input">
@@ -168,7 +169,8 @@ const Login = () => {
                 "Login"
               )}
             </button>
-            <p>Don't have an account <Link to ="/signup">Sign up</Link></p>
+            <p>Don't have an account? <Link to ="/signup">Sign up</Link></p>
+            <Link to="/" className="back-to-home">← Back to Home</Link>
           </form>
         </div>
     </section>
