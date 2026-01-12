@@ -50,6 +50,25 @@
   letter-spacing: -0.5px;
 }
 
+/* Dark mode adjustments */
+body.dark-mode .public-brand-name {
+  color: #ffffff;
+}
+
+/* Light mode on non-hero sections */
+body:not(.dark-mode) .public-header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+body:not(.dark-mode) .public-brand-name {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 /* ==================== NAV ACTIONS (RIGHT) ==================== */
 
 .public-nav-actions {
@@ -76,6 +95,14 @@
 .public-theme-toggle:hover {
   background: rgba(255, 255, 255, 0.2);
   transform: scale(1.05);
+}
+
+body:not(.dark-mode) .public-theme-toggle {
+  background: rgba(37, 99, 235, 0.1);
+}
+
+body:not(.dark-mode) .public-theme-toggle:hover {
+  background: rgba(37, 99, 235, 0.2);
 }
 
 .public-btn {
@@ -113,6 +140,27 @@
   background: #f8fafc;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+/* Light mode button adjustments */
+body:not(.dark-mode) .public-btn-login {
+  color: #2563eb;
+  border: 1px solid #2563eb;
+}
+
+body:not(.dark-mode) .public-btn-login:hover {
+  background: rgba(37, 99, 235, 0.1);
+  border-color: #1e40af;
+}
+
+body:not(.dark-mode) .public-btn-signup {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+body:not(.dark-mode) .public-btn-signup:hover {
+  background: #1e40af;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 /* ==================== RESPONSIVE ==================== */
