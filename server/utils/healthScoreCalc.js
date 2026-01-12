@@ -38,6 +38,52 @@ const calculateFinancialHealth = async (userId, month, year) => {
     const totalExpenses = expenseData.reduce((sum, item) => sum + (item.amount || 0), 0);
     const savings = totalIncome - totalExpenses;
 
+    // Check for empty/insufficient data states
+    const hasIncome = totalIncome > 0;
+    const hasExpenses = totalExpenses > 0;
+    const hasBudgets = budgetData.length > 0;
+
+    // Return empty state if no financial data
+    if (!hasIncome && !hasExpenses) {
+      return {
+        score: null,
+        status: "No Data",
+        statusClass: "empty",
+        insights: [],
+        breakdown: {
+          totalIncome: 0,
+          totalExpenses: 0,
+          savings: 0,
+          savingsRate: 0
+        },
+        isEmpty: true,
+        message: "Add income and expenses to see your financial health score"
+      };
+    }
+
+    // Return partial state if missing critical data
+    if (!hasIncome || !hasExpenses) {
+      const partialInsights = [];
+      if (!hasIncome) partialInsights.push("Add income records to complete your financial profile");
+      if (!hasExpenses) partialInsights.push("Add expense records to track your spending");
+      if (!hasBudgets) partialInsights.push("Set budgets to improve score accuracy");
+
+      return {
+        score: null,
+        status: "Incomplete Data",
+        statusClass: "partial",
+        insights: partialInsights,
+        breakdown: {
+          totalIncome,
+          totalExpenses,
+          savings,
+          savingsRate: totalIncome > 0 ? ((savings / totalIncome) * 100) : 0
+        },
+        isPartial: true,
+        message: "Add more financial data to calculate your health score"
+      };
+    }
+
     // Group expenses by week for stability calculation
     const weeklyExpenses = groupByWeek(expenseData);
 

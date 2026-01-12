@@ -1,11 +1,11 @@
 import React, { useState,useEffect, useContext, useMemo, useRef } from "react";
-import { PieChart, Pie,  Legend ,Cell} from "recharts";
 import "./Accounts.css";
 import { useNavigate } from "react-router-dom";
 import { DateContext, LoginContext } from "../Context/Context";
 import { ToastContext } from "../Toast/ToastProvider";
 import { API_BASE_URL } from "../../api/api";
 import EmptyState from "../Common/EmptyState";
+import BalanceSplitChart from "../Common/BalanceSplitChart";
 
 const authHeaders = () => ({
   "Content-Type": "application/json",
@@ -169,8 +169,16 @@ const Accounts = () => {
   const [selectedAccountType, setSelectedAccountType] = useState("");
   const [transactions, setTransactions] = useState([]);
 
+  // Fetch transactions whenever month, year, or selected account changes
+  useEffect(() => {
+    if (selectedAccountType && logindata?.ValidUserOne?._id) {
+      fetchTransactions(selectedAccountType);
+    }
+  }, [selectedMonth, selectedYear, selectedAccountType, logindata?.ValidUserOne?._id]);
 
   const fetchTransactions = async (accountType) => {
+    if (!accountType) return;
+    
     try {
       const expenseResponse = await fetch(
         `${API_BASE_URL}/expense/useracc/${logindata.ValidUserOne._id}/${accountType}`,
@@ -210,11 +218,12 @@ const Accounts = () => {
             type: "Income",
             formattedDate: new Date(income.date).toLocaleDateString(),
           })),
-      ];
+      ].sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date, newest first
   
       setTransactions(combinedTransactions);
     } catch (error) {
       console.error("Error fetching transactions:", error);
+      showToast("Error loading transactions", "error");
     }
   };
 
@@ -222,7 +231,7 @@ const Accounts = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    if (name === "accountName") {
+    if (name === "accountName" && value) {
       setSelectedAccountType(value);
     }
   };
@@ -235,9 +244,11 @@ const Accounts = () => {
     setLoading(true);
     
     try {
-      await fetchTransactions(selectedAccountType || formData.accountName);
-      setFormData({ accountName: "", amount: "" });
-      showToast("Account view updated successfully", "success");
+      const accountToView = selectedAccountType || formData.accountName;
+      if (accountToView) {
+        await fetchTransactions(accountToView);
+        showToast(`Showing transactions for ${accountToView}`, "success");
+      }
     } catch (error) {
       showToast(error.message || "Error updating account", "error");
     } finally {
@@ -290,41 +301,9 @@ const Accounts = () => {
         </div>
         <div className="overview-section">
           <h2 className="section-title">Balance Split</h2>
+          <p className="section-subtitle">How your money is distributed</p>
           <div className="piechart">
-            {accountData.filter(acc => acc.value > 0).length > 0 ? (
-              <PieChart width={280} height={250}>
-                <Pie
-                  data={accountData.filter(acc => acc.value > 0)}
-                  cx={140}
-                  cy={125}
-                  innerRadius={60}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {accountData.filter(acc => acc.value > 0).map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Legend
-                  iconSize={10}
-                  iconType="circle"
-                  layout="vertical"
-                  verticalAlign="middle"
-                  align="right"
-                />
-              </PieChart>
-            ) : (
-              <div className="empty-state">
-                <p style={{ fontSize: '32px', margin: '0 0 8px 0' }}>📊</p>
-                <p style={{ margin: '4px 0' }}>No account distribution yet.</p>
-                <p style={{ margin: '4px 0' }}>Add funds to see your breakdown.</p>
-              </div>
-            )}
+            <BalanceSplitChart data={accountData} variant="accounts" />
           </div>
         </div>
       </div>
@@ -332,9 +311,21 @@ const Accounts = () => {
       {/* Transactions Section */}
       <div className="transactions-section">
         <h2 className="section-title">Recent Transactions</h2>
-        <p className="section-subtitle">{monthLabel} {selectedYear}</p>
+        <p className="section-subtitle">
+          {selectedAccountType ? `${selectedAccountType} • ${monthLabel} ${selectedYear}` : `${monthLabel} ${selectedYear}`}
+        </p>
         <div className="table_box">
-          {transactions.length > 0 ? (
+          {!selectedAccountType ? (
+            <EmptyState
+              title="Select an account to view transactions"
+              description="Use the form below to choose an account type and see its transaction history."
+              actionLabel="↓ Select Account Below"
+              onAction={() => {
+                formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              illustration="🔍"
+            />
+          ) : transactions.length > 0 ? (
             <table className="table_fill">
               <thead>
                 <tr>
@@ -345,13 +336,13 @@ const Accounts = () => {
                 </tr>
               </thead>
               <tbody>
-                {transactions.map((transaction) => (
-                  <tr key={transaction.id} className="row">
+                {transactions.slice(0, 10).map((transaction, index) => (
+                  <tr key={transaction._id || index} className="row">
                     <td className="text-left">{transaction.description}</td>
-                    <td className={`text-left amount ${transaction.type === 'expense' ? 'negative' : 'positive'}`}>
-                      {transaction.type === 'expense' ? '-' : '+'}₹{transaction.amount}
+                    <td className={`text-left amount ${transaction.type === 'Expense' ? 'negative' : 'positive'}`}>
+                      {transaction.type === 'Expense' ? '-' : '+'}₹{transaction.amount}
                     </td>
-                    <td className="text-left">{transaction.date}</td>
+                    <td className="text-left">{transaction.formattedDate}</td>
                     <td className="text-left">{transaction.type}</td>
                   </tr>
                 ))}
@@ -359,13 +350,13 @@ const Accounts = () => {
             </table>
           ) : (
             <EmptyState
-              title="No transactions yet"
-              description="Start by adding your first expense or income to see account insights here."
+              title="No transactions this month"
+              description={`No ${selectedAccountType.toLowerCase()} transactions found for ${monthLabel} ${selectedYear}.`}
               actionLabel="+ Add Transaction"
               onAction={() => {
-                formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                window.location.href = "/transaction";
               }}
-              illustration="*"
+              illustration="📭"
             />
           )}
         </div>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo, useRef } from "react";
 import "./Dashboard.css";
 import { NavLink } from "react-router-dom";
-import { PieChart, Pie, Cell, Legend } from "recharts";
 import { DateContext, LoginContext } from "../Context/Context";
 import { ToastContext } from "../Toast/ToastProvider";
 import { exportMonthlySummary } from "../../utils/exportUtils";
@@ -11,6 +10,7 @@ import { addIncome as addIncomeApi } from "../../api/incomeApi";
 import { getHealthScore as getHealthScoreApi } from "../../api/healthApi";
 import { API_BASE_URL, cachedGet } from "../../api/api";
 import { SkeletonCard, SkeletonList, SkeletonHero } from "../Common/Skeleton";
+import BalanceSplitChart from "../Common/BalanceSplitChart";
 
 const authHeaders = () => ({
   "Content-Type": "application/json",
@@ -519,7 +519,71 @@ const Dashboard = () => {
             <div style={{ textAlign: "center", padding: "20px", color: "#6b7280" }}>
               Loading financial health...
             </div>
-          ) : healthScore ? (
+          ) : healthScore?.isEmpty ? (
+            <div className="health-empty-state">
+              <h3>No Financial Data Yet</h3>
+              <p>{healthScore.message || "Your financial health score will appear once you add financial data."}</p>
+              <ul className="empty-state-list">
+                <li>💰 Income records</li>
+                <li>💸 Expense transactions</li>
+                <li>📊 Monthly budgets</li>
+              </ul>
+              <div className="empty-state-cta">
+                <NavLink to="/transaction" className="btn btn-primary">
+                  Add Transactions
+                </NavLink>
+                <NavLink to="/budget" className="btn btn-secondary">
+                  Set Budgets
+                </NavLink>
+              </div>
+            </div>
+          ) : healthScore?.isPartial ? (
+            <div className="health-partial-state">
+              <div className="health-header">
+                <div className="health-title-section">
+                  <span className="health-title">Financial Health</span>
+                  <span 
+                    className="info-icon" 
+                    title="Add more data to calculate your health score"
+                    role="img"
+                    aria-label="Information"
+                  >
+                    ℹ️
+                  </span>
+                </div>
+                <span className="health-badge health-partial">
+                  Incomplete
+                </span>
+              </div>
+              <div className="partial-message">
+                <strong>⚠️ {healthScore.message || "Add more data to calculate your score"}</strong>
+                <p>Complete your financial profile to unlock health insights:</p>
+                <ul className="insights-list">
+                  {healthScore.insights && healthScore.insights.map((insight, idx) => (
+                    <li key={idx}>{insight}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="health-breakdown">
+                <div className="breakdown-item">
+                  <span className="breakdown-label">Income</span>
+                  <span className="breakdown-value">₹{(healthScore.breakdown?.totalIncome || 0).toFixed(0)}</span>
+                </div>
+                <div className="breakdown-item">
+                  <span className="breakdown-label">Expenses</span>
+                  <span className="breakdown-value">₹{(healthScore.breakdown?.totalExpenses || 0).toFixed(0)}</span>
+                </div>
+                <div className="breakdown-item">
+                  <span className="breakdown-label">Savings</span>
+                  <span className="breakdown-value">₹{(healthScore.breakdown?.savings || 0).toFixed(0)}</span>
+                </div>
+                <div className="breakdown-item">
+                  <span className="breakdown-label">Rate</span>
+                  <span className="breakdown-value">{(healthScore.breakdown?.savingsRate || 0).toFixed(1)}%</span>
+                </div>
+              </div>
+            </div>
+          ) : healthScore && healthScore.score !== null ? (
             <div className={`health-card-content health-${healthScore.statusClass}`}>
               <div className="health-header">
                 <div className="health-title-section">
@@ -602,32 +666,8 @@ const Dashboard = () => {
         <div className="charts-row">
           <div className="piechart">
             <h2>Account Overview</h2>
-            <PieChart width={360} height={220}>
-              <Pie
-                data={accountData}
-                cx={150}
-                cy={85}
-                innerRadius={60}
-                outerRadius={80}
-                fill="#8884d8"
-                paddingAngle={5}
-                dataKey="value"
-              >
-                {accountData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Legend
-                iconSize={10}
-                iconType="circle"
-                layout="vertical"
-                verticalAlign="middle"
-                align="right"
-              />
-            </PieChart>
+            <p className="chart-description">Distribution of your balances across accounts</p>
+            <BalanceSplitChart data={accountData} variant="dashboard" />
           </div>
 
           <div className="total">

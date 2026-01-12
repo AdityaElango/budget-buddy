@@ -107,6 +107,13 @@ body.dark-mode .piechart {
   color: var(--text-primary);
 }
 
+.chart-description {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-md) 0;
+  line-height: 1.4;
+}
+
 .total {
   background: var(--bg-primary);
   padding: var(--space-lg);
@@ -746,6 +753,46 @@ body.dark-mode .health-card-content {
   background: rgba(239, 68, 68, 0.15);
   color: #ef4444;
   border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.health-badge.health-partial {
+  background: rgba(251, 146, 60, 0.15);
+  color: #fb923c;
+  border: 1px solid rgba(251, 146, 60, 0.3);
+}
+
+/* Partial state styling */
+.health-partial-state {
+  background: var(--bg-primary);
+  border-radius: 14px;
+  padding: var(--space-lg);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  border-left: 6px solid #fb923c;
+}
+
+body.dark-mode .health-partial-state {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.partial-message {
+  margin: var(--space-md) 0;
+  padding: var(--space-md);
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border-left: 3px solid #fb923c;
+}
+
+.partial-message strong {
+  display: block;
+  font-size: 14px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.partial-message p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 8px 0;
 }
 
 /* Insights section */

@@ -1,0 +1,140 @@
+.balance-split-chart {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Empty state */
+.chart-empty-state {
+  text-align: center;
+  padding: var(--space-lg);
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin: 0 0 12px 0;
+}
+
+.empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+}
+
+.empty-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Custom Legend */
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 16px;
+  max-width: 200px;
+}
+
+.legend-item {
+  display: grid;
+  grid-template-columns: 12px 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-label {
+  color: var(--text-primary);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.legend-value {
+  color: var(--text-primary);
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.legend-percent {
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-align: right;
+  min-width: 45px;
+}
+
+/* Custom Tooltip */
+.chart-tooltip {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode .chart-tooltip {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.tooltip-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 6px 0;
+}
+
+.tooltip-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
+}
+
+.tooltip-percent {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Variant-specific styling */
+.balance-split-chart.dashboard {
+  /* Dashboard-specific overrides if needed */
+}
+
+.balance-split-chart.accounts {
+  /* Accounts-specific overrides if needed */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .chart-legend {
+    padding-left: 8px;
+    max-width: 160px;
+  }
+
+  .legend-item {
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .legend-value {
+    font-size: 12px;
+  }
+
+  .legend-percent {
+    font-size: 11px;
+    min-width: 40px;
+  }
+}
