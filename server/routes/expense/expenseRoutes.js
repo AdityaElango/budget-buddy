@@ -1,4 +1,5 @@
 const express = require("express");
+const authenticate = require("../../middleware/authenticate");
 const {
   createExpCtrl,
   fetchAllExpCtrl,
@@ -12,13 +13,13 @@ const {
 
 const expenseRoute = express.Router();
 
-expenseRoute.post("/", createExpCtrl);
+expenseRoute.post("/", authenticate, createExpCtrl);
 expenseRoute.get("/", fetchAllExpCtrl);
-expenseRoute.get("/user/:userid", userExpCtrl);
-expenseRoute.get("/user/:userid/:cat", usercatExpCtrl);
-expenseRoute.get("/useracc/:userid/:acc", useraccExpCtrl);
+expenseRoute.get("/user/:userid", authenticate, userExpCtrl);
+expenseRoute.get("/user/:userid/:cat", authenticate, usercatExpCtrl);
+expenseRoute.get("/useracc/:userid/:acc", authenticate, useraccExpCtrl);
 expenseRoute.get("/:id", fetchExpDetailsCtrl);
-expenseRoute.put("/:id", updateExpCtrl);
-expenseRoute.delete("/:id", deleteExpCtrl);
+expenseRoute.put("/:id", authenticate, updateExpCtrl);
+expenseRoute.delete("/:id", authenticate, deleteExpCtrl);
 
 module.exports = expenseRoute;

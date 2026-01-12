@@ -128,10 +128,19 @@ const Transaction = () => {
 
     const fetchExpenseAndIncome = async () => {
       try {
+        const token = localStorage.getItem("usersdatatoken");
         const userId = logindata.ValidUserOne._id;
         const [expenseRes, incomeRes] = await Promise.all([
-          fetch(`${API_BASE}/expense/user/${userId}`),
-          fetch(`${API_BASE}/income/user/${userId}`),
+          fetch(`${API_BASE}/expense/user/${userId}?month=${selectedMonth}&year=${selectedYear}`, {
+            headers: {
+              "Authorization": `Bearer ${token}`,
+            },
+          }),
+          fetch(`${API_BASE}/income/user/${userId}?month=${selectedMonth}&year=${selectedYear}`, {
+            headers: {
+              "Authorization": `Bearer ${token}`,
+            },
+          }),
         ]);
 
         const [expenses, incomes] = await Promise.all([
@@ -153,7 +162,7 @@ const Transaction = () => {
     };
 
     fetchExpenseAndIncome();
-  }, [logindata?.ValidUserOne?._id, showToast]);
+  }, [logindata?.ValidUserOne?._id, showToast, selectedMonth, selectedYear]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -234,10 +243,12 @@ const Transaction = () => {
     setSubmitting(true);
 
     try {
+      const token = localStorage.getItem("usersdatatoken");
       const res = await fetch(`${API_BASE}/expense`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
           category,
@@ -269,10 +280,12 @@ const Transaction = () => {
     setSubmitting(true);
 
     try {
+      const token = localStorage.getItem("usersdatatoken");
       const res = await fetch(`${API_BASE}/income`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
           category,

@@ -1,4 +1,5 @@
 const express = require("express");
+const authenticate = require("../../middleware/authenticate");
 const {
   createIncCtrl,
   fetchAllIncCtrl,
@@ -11,12 +12,12 @@ const {
 
 const incomeRoute = express.Router();
 
-incomeRoute.post("/", createIncCtrl);
+incomeRoute.post("/", authenticate, createIncCtrl);
 incomeRoute.get("/", fetchAllIncCtrl);
 incomeRoute.get("/:id", fetchIncDetailsCtrl);
-incomeRoute.put("/:id", updateIncCtrl);
-incomeRoute.get("/user/:userid", userIncCtrl);
-incomeRoute.get("/useracc/:userid/:acc", useraccIncCtrl);
-incomeRoute.delete("/:id", deleteIncCtrl);
+incomeRoute.put("/:id", authenticate, updateIncCtrl);
+incomeRoute.get("/user/:userid", authenticate, userIncCtrl);
+incomeRoute.get("/useracc/:userid/:acc", authenticate, useraccIncCtrl);
+incomeRoute.delete("/:id", authenticate, deleteIncCtrl);
 
 module.exports = incomeRoute;
