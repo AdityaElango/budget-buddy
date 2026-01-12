@@ -116,6 +116,36 @@ const Budget = () => {
     }));
   };
 
+  const deleteBudget = async (budgetId, index) => {
+    if (!budgetId) {
+      showToast("Cannot delete budget without ID", "error");
+      return;
+    }
+
+    try {
+      const confirmDelete = window.confirm("Are you sure you want to delete this budget?");
+      if (!confirmDelete) return;
+
+      const response = await fetch(`${API_BASE_URL}/budget/${budgetId}`, {
+        method: "DELETE",
+        headers: authHeaders(),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete budget");
+      }
+
+      // Remove from local state
+      setEnteredBudgets((prevBudgets) => 
+        prevBudgets.filter((_, i) => i !== index)
+      );
+      showToast("Budget deleted successfully", "success");
+    } catch (error) {
+      console.error("Error deleting budget:", error);
+      showToast(error.message || "Error deleting budget", "error");
+    }
+  };
+
   const handleSetBudget = async (e) => {
     e.preventDefault();
     
@@ -303,6 +333,21 @@ const Budget = () => {
                           <span className="text-muted">/ ₹{budgetEntry.budget}</span>
                         </div>
                         <span className={`status-badge ${statusClass}`}>{statusText}</span>
+                        <button
+                          onClick={() => deleteBudget(budgetEntry._id, index)}
+                          className="delete-btn"
+                          title="Delete budget"
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#dc3545',
+                            cursor: 'pointer',
+                            fontSize: '18px',
+                            padding: '0',
+                          }}
+                        >
+                          ✕
+                        </button>
                       </div>
                     </div>
 
