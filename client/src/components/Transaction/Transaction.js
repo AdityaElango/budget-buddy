@@ -252,7 +252,7 @@ const Transaction = () => {
         },
         body: JSON.stringify({
           category,
-          amount,
+          amount: Number(amount),
           description,
           date,
           account: accountType,
@@ -289,7 +289,7 @@ const Transaction = () => {
         },
         body: JSON.stringify({
           category,
-          amount,
+          amount: Number(amount),
           description,
           date,
           account: accountType,
