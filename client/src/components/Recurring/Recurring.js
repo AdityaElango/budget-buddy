@@ -7,7 +7,7 @@ import { API_BASE_URL } from "../../api/api";
 
 const authHeaders = () => ({
   "Content-Type": "application/json",
-  Authorization: localStorage.getItem("usersdatatoken") || "",
+  Authorization: `Bearer ${localStorage.getItem("usersdatatoken") || ""}`,
 });
 
 const Recurring = () => {

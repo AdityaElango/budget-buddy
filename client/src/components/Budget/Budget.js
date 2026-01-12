@@ -7,7 +7,7 @@ import { ToastContext } from "../Toast/ToastProvider";
 
 const authHeaders = () => ({
   "Content-Type": "application/json",
-  Authorization: localStorage.getItem("usersdatatoken") || "",
+  Authorization: `Bearer ${localStorage.getItem("usersdatatoken") || ""}`,
 });
 
 const getProgressBarVariant = (amount, max) => {

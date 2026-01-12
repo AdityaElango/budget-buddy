@@ -314,7 +314,13 @@ const Transaction = () => {
   const deleteExpense = async (id) => {
     setTransactions((prev) => prev.filter((t) => t.id !== id));
     try {
-      const res = await fetch(`${API_BASE}/expense/${id}`, { method: "DELETE" });
+      const token = localStorage.getItem("usersdatatoken");
+      const res = await fetch(`${API_BASE}/expense/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
       if (!res.ok) throw new Error("Failed to delete expense");
       showToast("Expense deleted", "success");
     } catch (error) {
@@ -325,7 +331,13 @@ const Transaction = () => {
   const deleteIncome = async (id) => {
     setTransactions((prev) => prev.filter((t) => t.id !== id));
     try {
-      const res = await fetch(`${API_BASE}/income/${id}`, { method: "DELETE" });
+      const token = localStorage.getItem("usersdatatoken");
+      const res = await fetch(`${API_BASE}/income/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
       if (!res.ok) throw new Error("Failed to delete income");
       showToast("Income deleted", "success");
     } catch (error) {
@@ -351,10 +363,14 @@ const Transaction = () => {
     setTransactions((prev) => prev.filter((t) => !selectedIds.includes(t.id)));
     setSelectedIds([]);
     try {
+      const token = localStorage.getItem("usersdatatoken");
       await Promise.all(
         toDelete.map((t) =>
           fetch(`${API_BASE}/${t.type.toLowerCase()}/${t.id}`, {
             method: "DELETE",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+            },
           })
         )
       );
@@ -371,11 +387,15 @@ const Transaction = () => {
       prev.map((t) => (selectedIds.includes(t.id) ? { ...t, category: bulkCategory } : t))
     );
     try {
+      const token = localStorage.getItem("usersdatatoken");
       await Promise.all(
         toUpdate.map((t) =>
           fetch(`${API_BASE}/${t.type.toLowerCase()}/${t.id}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
             body: JSON.stringify({ category: bulkCategory }),
           })
         )
