@@ -6,10 +6,15 @@ const keysecret = process.env.JWT_SECRET || "sdeivanaiananyaparikshithadityae"
 const authenticate = async(req,res,next)=>{
     try{
         // Check for token in Authorization header or cookie
-        const token = req.headers.authorization || req.cookies.usercookie;
+        let token = req.headers.authorization || req.cookies.usercookie;
         
         if (!token) {
             return res.status(401).json({status:401,message:"Unauthorized no token provided"});
+        }
+        
+        // Remove "Bearer " prefix if present
+        if (token.startsWith("Bearer ")) {
+            token = token.slice(7);
         }
         
         const verifytoken = jwt.verify(token,keysecret);

@@ -1,14 +1,17 @@
 import axios from "axios";
 import authService from "../services/authService";
 
+// Use environment variable or default to local development
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5001/api";
+
 const api = axios.create({
-  baseURL: "https://budget-buddy-k52t.onrender.com/api",
+  baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-export const API_BASE_URL = "https://budget-buddy-k52t.onrender.com/api";
+export const API_BASE_URL = BASE_URL;
 
 // Request interceptor: Attach token and check expiry
 api.interceptors.request.use((config) => {

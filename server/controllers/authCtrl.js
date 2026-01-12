@@ -57,7 +57,7 @@ const loginCtrl = expressAsyncHandler(async (req, res) => {
   }
 
   const token = jwt.sign(
-    { id: user._id },
+    { _id: user._id, id: user._id }, // Include both _id and id for compatibility
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );
