@@ -70,6 +70,10 @@ const recurringRoute = require("./recurring/recurringRoutes");
 
 router.use("/recurring",recurringRoute);
 
+const goalRoute = require("./goal/goalRoutes");
+
+router.use("/goal",goalRoute);
+
 // Update user profile
 router.put("/updateuser/:id", authenticate, async (req, res) => {
   try {

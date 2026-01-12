@@ -2,21 +2,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import "./Goals.css";
 import { useNavigate } from "react-router-dom";
 import { DateContext, LoginContext } from "../Context/Context";
+import { API_BASE_URL } from "../../api/api";
 
-const STORAGE_KEY = "budgetbuddy_goals";
-
-const loadGoals = () => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-};
-
-const saveGoals = (goals) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(goals));
-};
+const authHeaders = () => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${localStorage.getItem("usersdatatoken") || ""}`,
+});
 
 const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 
@@ -25,22 +16,41 @@ const Goals = () => {
   const { logindata } = React.useContext(LoginContext);
   const { selectedMonth, selectedYear } = React.useContext(DateContext);
 
-  const [goals, setGoals] = useState(loadGoals);
+  const [goals, setGoals] = useState([]);
   const [name, setName] = useState("");
   const [targetAmount, setTargetAmount] = useState("");
   const [deadline, setDeadline] = useState("");
   const [saved, setSaved] = useState("");
   const [errors, setErrors] = useState({});
-
-  useEffect(() => {
-    saveGoals(goals);
-  }, [goals]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!logindata?.ValidUserOne) {
       navigate("/login");
     }
   }, [logindata, navigate]);
+
+  const fetchGoals = async () => {
+    if (!logindata?.ValidUserOne?._id) return;
+    
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/goal/user/${logindata.ValidUserOne._id}`,
+        {
+          method: "GET",
+          headers: authHeaders(),
+        }
+      );
+      const data = await response.json();
+      setGoals(data);
+    } catch (error) {
+      console.error("Error fetching goals:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchGoals();
+  }, [logindata?.ValidUserOne?._id]);
 
   const resetForm = () => {
     setName("");
@@ -59,29 +69,74 @@ const Goals = () => {
     return Object.keys(next).length === 0;
   };
 
-  const addGoal = (e) => {
+  const addGoal = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    const goal = {
-      id: crypto.randomUUID(),
-      name: name.trim(),
-      target: Number(targetAmount),
-      saved: saved ? Number(saved) : 0,
-      deadline,
-      createdAt: new Date().toISOString(),
-    };
-    setGoals((prev) => [...prev, goal]);
-    resetForm();
+    
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/goal`, {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({
+          name: name.trim(),
+          targetAmount: Number(targetAmount),
+          savedAmount: saved ? Number(saved) : 0,
+          deadline,
+          user: logindata.ValidUserOne._id,
+        }),
+      });
+      
+      if (!response.ok) throw new Error("Failed to add goal");
+      
+      await fetchGoals();
+      resetForm();
+    } catch (error) {
+      console.error("Error adding goal:", error);
+      setErrors({ submit: "Failed to add goal" });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const updateSaved = (id, delta) => {
-    setGoals((prev) =>
-      prev.map((g) => (g.id === id ? { ...g, saved: Math.max(0, g.saved + delta) } : g))
-    );
+  const updateSaved = async (goalId, currentSaved, delta) => {
+    const newSaved = Math.max(0, currentSaved + delta);
+    
+    try {
+      const goal = goals.find(g => g._id === goalId);
+      const response = await fetch(`${API_BASE_URL}/goal/${goalId}`, {
+        method: "PUT",
+        headers: authHeaders(),
+        body: JSON.stringify({
+          ...goal,
+          savedAmount: newSaved,
+          completed: newSaved >= goal.targetAmount,
+        }),
+      });
+      
+      if (!response.ok) throw new Error("Failed to update goal");
+      
+      await fetchGoals();
+    } catch (error) {
+      console.error("Error updating goal:", error);
+    }
   };
 
-  const deleteGoal = (id) => {
-    setGoals((prev) => prev.filter((g) => g.id !== id));
+  const deleteGoal = async (goalId) => {
+    if (!window.confirm("Are you sure you want to delete this goal?")) return;
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/goal/${goalId}`, {
+        method: "DELETE",
+        headers: authHeaders(),
+      });
+      
+      if (!response.ok) throw new Error("Failed to delete goal");
+      
+      await fetchGoals();
+    } catch (error) {
+      console.error("Error deleting goal:", error);
+    }
   };
 
   const sortedGoals = useMemo(
@@ -122,7 +177,9 @@ const Goals = () => {
               Saved so far (optional)
               <input type="number" value={saved} onChange={(e) => setSaved(e.target.value)} placeholder="10000" />
             </label>
-            <button type="submit" className="btn">Add goal</button>
+            <button type="submit" className="btn" disabled={loading}>
+              {loading ? "Adding..." : "Add goal"}
+            </button>
           </form>
         </div>
 
@@ -134,30 +191,30 @@ const Goals = () => {
             </div>
           ) : (
             sortedGoals.map((goal) => {
-              const progress = Math.min(100, Math.round((goal.saved / goal.target) * 100));
-              const remaining = Math.max(0, goal.target - goal.saved);
+              const progress = Math.min(100, Math.round((goal.savedAmount / goal.targetAmount) * 100));
+              const remaining = Math.max(0, goal.targetAmount - goal.savedAmount);
               return (
-                <div key={goal.id} className="card goal-card">
+                <div key={goal._id} className="card goal-card">
                   <div className="goal-header">
                     <div>
                       <h3>{goal.name}</h3>
                       <p className="muted">Deadline: {formatDate(goal.deadline)}</p>
                     </div>
-                    <button className="ghost" type="button" onClick={() => deleteGoal(goal.id)}>Delete</button>
+                    <button className="ghost" type="button" onClick={() => deleteGoal(goal._id)}>Delete</button>
                   </div>
                   <div className="progress-wrap">
-                    <div className="progress-bar" aria-valuemin={0} aria-valuemax={goal.target} aria-valuenow={goal.saved}>
+                    <div className="progress-bar" aria-valuemin={0} aria-valuemax={goal.targetAmount} aria-valuenow={goal.savedAmount}>
                       <div className="progress-fill" style={{ width: `${progress}%` }} />
                     </div>
                     <div className="progress-meta">
-                      <span>₹{goal.saved.toLocaleString()} saved</span>
-                      <span>{progress}% of ₹{goal.target.toLocaleString()}</span>
+                      <span>₹{goal.savedAmount.toLocaleString()} saved</span>
+                      <span>{progress}% of ₹{goal.targetAmount.toLocaleString()}</span>
                     </div>
                   </div>
                   <div className="goal-actions">
-                    <button type="button" className="ghost" onClick={() => updateSaved(goal.id, 1000)}>+1k</button>
-                    <button type="button" className="ghost" onClick={() => updateSaved(goal.id, 5000)}>+5k</button>
-                    <button type="button" className="ghost" onClick={() => updateSaved(goal.id, -1000)}>-1k</button>
+                    <button type="button" className="ghost" onClick={() => updateSaved(goal._id, goal.savedAmount, 1000)}>+1k</button>
+                    <button type="button" className="ghost" onClick={() => updateSaved(goal._id, goal.savedAmount, 5000)}>+5k</button>
+                    <button type="button" className="ghost" onClick={() => updateSaved(goal._id, goal.savedAmount, -1000)}>-1k</button>
                     <span className="muted">Remaining: ₹{remaining.toLocaleString()}</span>
                   </div>
                 </div>

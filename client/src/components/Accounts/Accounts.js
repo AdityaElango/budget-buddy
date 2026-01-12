@@ -168,12 +168,18 @@ const Accounts = () => {
   const fetchTransactions = async (accountType) => {
     try {
       const expenseResponse = await fetch(
-        `${API_BASE_URL}/expense/useracc/${logindata.ValidUserOne._id}/${accountType}`
+        `${API_BASE_URL}/expense/useracc/${logindata.ValidUserOne._id}/${accountType}`,
+        {
+          headers: authHeaders(),
+        }
       );
       const expenseData = await expenseResponse.json();
   
       const incomeResponse = await fetch(
-        `${API_BASE_URL}/income/useracc/${logindata.ValidUserOne._id}/${accountType}`
+        `${API_BASE_URL}/income/useracc/${logindata.ValidUserOne._id}/${accountType}`,
+        {
+          headers: authHeaders(),
+        }
       );
       const incomeData = await incomeResponse.json();
   
