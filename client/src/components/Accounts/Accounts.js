@@ -83,6 +83,7 @@ const Accounts = () => {
     try {
       const userId = logindata?.ValidUserOne?._id;
       if (!userId) return;
+      const token = localStorage.getItem("usersdatatoken");
       const prevMonth = selectedMonth === 1 ? 12 : selectedMonth - 1;
       const prevYear = selectedMonth === 1 ? selectedYear - 1 : selectedYear;
       const updatedAccountData = await Promise.all(
@@ -96,6 +97,7 @@ const Accounts = () => {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
               },
             }
           );
@@ -115,6 +117,7 @@ const Accounts = () => {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
               },
             }
           );

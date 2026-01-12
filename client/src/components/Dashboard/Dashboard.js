@@ -14,7 +14,7 @@ import { SkeletonCard, SkeletonList, SkeletonHero } from "../Common/Skeleton";
 
 const authHeaders = () => ({
   "Content-Type": "application/json",
-  Authorization: localStorage.getItem("usersdatatoken") || "",
+  Authorization: `Bearer ${localStorage.getItem("usersdatatoken") || ""}`,
 });
 
 const DashboardSkeleton = () => {
