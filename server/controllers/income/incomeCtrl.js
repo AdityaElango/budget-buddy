@@ -1,4 +1,4 @@
-const expressAsyncHandler = require("express-async-handler");
+﻿const expressAsyncHandler = require("express-async-handler");
 const Income = require("../../models/incomeSchema");
 
 //create income
@@ -42,7 +42,7 @@ const fetchAllIncCtrl = expressAsyncHandler(async(req, res) =>{
 
 //fetch single income
 const fetchIncDetailsCtrl = expressAsyncHandler(async(req, res) => {
-    const { id } = req?.params;
+    const { id} = req?.params;
     try{
         const income = await Income.findById(id);
         res.json(income); 
@@ -90,11 +90,21 @@ const deleteIncCtrl = expressAsyncHandler(async(req, res) => {
   
 });
 
-//find all expenses of particular user account
+//find all income of particular user account (with optional month/year filtering)
 const useraccIncCtrl = expressAsyncHandler(async(req, res) => {
     const { userid , acc} = req?.params;
+    const { month, year } = req.query;
+    
     try{
-        const income = await Income.find({user:userid , account:acc});
+        let query = { user: userid, account: acc };
+        
+        if (month && year) {
+            const startDate = new Date(year, month - 1, 1);
+            const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+            query.date = { $gte: startDate, $lte: endDate };
+        }
+        
+        const income = await Income.find(query).sort({ date: -1 });
         res.json(income);
     }catch(error){
         res.json(error)
@@ -104,8 +114,18 @@ const useraccIncCtrl = expressAsyncHandler(async(req, res) => {
 
 const userIncCtrl = expressAsyncHandler(async(req, res) => {
     const { userid } = req?.params;
+    const { month, year } = req.query;
+    
     try{
-        const income = await Income.find({user:userid});
+        let query = { user: userid };
+        
+        if (month && year) {
+            const startDate = new Date(year, month - 1, 1);
+            const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+            query.date = { $gte: startDate, $lte: endDate };
+        }
+        
+        const income = await Income.find(query).sort({ date: -1 });
         res.json(income);
     }catch(error){
         res.json(error)

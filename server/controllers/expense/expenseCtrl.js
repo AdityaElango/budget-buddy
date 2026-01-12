@@ -1,9 +1,9 @@
-const expressAsyncHandler = require("express-async-handler");
+﻿const expressAsyncHandler = require("express-async-handler");
 const Expense = require("../../models/expenseSchema");
 
-//create expense
+//create
 const createExpCtrl = expressAsyncHandler(async(req, res) =>{
-    const {category, amount, description,account,date,  user, tags = []} = req.body;
+    const {category, amount,account, description,date,  user, tags = []} = req.body;
     // Basic validation
     if (!category || !description || !account || !date || !user) {
         return res.status(400).json({ error: "Missing required fields" });
@@ -29,7 +29,7 @@ const createExpCtrl = expressAsyncHandler(async(req, res) =>{
 });
 
 
-//fetch all expense
+//fetch all
 const fetchAllExpCtrl = expressAsyncHandler(async(req, res) =>{
     const {page} = req.query;
     try{
@@ -40,14 +40,14 @@ const fetchAllExpCtrl = expressAsyncHandler(async(req, res) =>{
     }
 });
 
-//fetch single expense
+//fetch details
 const fetchExpDetailsCtrl = expressAsyncHandler(async(req, res) => {
-    const { id } = req?.params;
+    const { id} = req?.params;
     try{
         const expense = await Expense.findById(id);
-        res.status(201).json({status:201,expense});
+        res.json(expense); 
     }catch(error){
-        res.status(401).json({status:401,error});
+        res.json(error)
     }
   
 });
@@ -56,7 +56,7 @@ const fetchExpDetailsCtrl = expressAsyncHandler(async(req, res) => {
 
 const updateExpCtrl = expressAsyncHandler(async (req, res) =>{
     const { id } = req?.params;
-    const {category, amount, description,account ,date, tags = []} = req.body;
+    const {category, amount, account, description,date, tags = []} = req.body;
 
     try{
         const normalizedTags = Array.isArray(tags) ? tags : String(tags || "").split(",").map(t => t.trim()).filter(Boolean);
@@ -65,8 +65,8 @@ const updateExpCtrl = expressAsyncHandler(async (req, res) =>{
             {
             category,
             amount,
-            description,
             account,
+            description,
             date,
             tags: normalizedTags,
         },
@@ -90,11 +90,21 @@ const deleteExpCtrl = expressAsyncHandler(async(req, res) => {
   
 });
 
-//find all expenses of particular user
+//find all expenses of particular user (with optional month/year filtering)
 const userExpCtrl = expressAsyncHandler(async(req, res) => {
     const { userid } = req?.params;
+    const { month, year } = req.query;
+    
     try{
-        const expense = await Expense.find({user:userid});
+        let query = { user: userid };
+        
+        if (month && year) {
+            const startDate = new Date(year, month - 1, 1);
+            const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+            query.date = { $gte: startDate, $lte: endDate };
+        }
+        
+        const expense = await Expense.find(query).sort({ date: -1 });
         res.json(expense);
     }catch(error){
         res.json(error)
@@ -102,11 +112,21 @@ const userExpCtrl = expressAsyncHandler(async(req, res) => {
   
 });
 
-//find all expenses of particular user category
+//find all expenses of particular category for a user (with optional month/year filtering)
 const usercatExpCtrl = expressAsyncHandler(async(req, res) => {
-    const { userid , cat} = req?.params;
+    const { userid , category} = req?.params;
+    const { month, year } = req.query;
+    
     try{
-        const expense = await Expense.find({user:userid , category:cat});
+        let query = { user: userid, category: category };
+        
+        if (month && year) {
+            const startDate = new Date(year, month - 1, 1);
+            const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+            query.date = { $gte: startDate, $lte: endDate };
+        }
+        
+        const expense = await Expense.find(query).sort({ date: -1 });
         res.json(expense);
     }catch(error){
         res.json(error)
@@ -114,18 +134,26 @@ const usercatExpCtrl = expressAsyncHandler(async(req, res) => {
   
 });
 
-//find all expenses of particular user account
+//find all expenses of particular user account (with optional month/year filtering)
 const useraccExpCtrl = expressAsyncHandler(async(req, res) => {
     const { userid , acc} = req?.params;
+    const { month, year } = req.query;
+    
     try{
-        const expense = await Expense.find({user:userid , account:acc});
+        let query = { user: userid, account: acc };
+        
+        if (month && year) {
+            const startDate = new Date(year, month - 1, 1);
+            const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+            query.date = { $gte: startDate, $lte: endDate };
+        }
+        
+        const expense = await Expense.find(query).sort({ date: -1 });
         res.json(expense);
     }catch(error){
         res.json(error)
     }
   
 });
-
-
 
 module.exports = {createExpCtrl, fetchAllExpCtrl,fetchExpDetailsCtrl , updateExpCtrl, deleteExpCtrl, userExpCtrl, usercatExpCtrl, useraccExpCtrl};

@@ -412,26 +412,39 @@ const Analysis = () => {
 
   const allTransactions = async () => {
     try {
-      const expenseData = await cachedGet(`/expense/user/${logindata.ValidUserOne._id}`, {}, { ttl: 5 * 60 * 1000 });
-      const incomeData = await cachedGet(`/income/user/${logindata.ValidUserOne._id}`, {}, { ttl: 5 * 60 * 1000 });
-      const isInPeriod = (dateStr) => {
-        const d = new Date(dateStr);
-        return d.getMonth() + 1 === selectedMonth && d.getFullYear() === selectedYear;
-      };
+      // Fetch current month data with server-side filtering
+      const expenseData = await cachedGet(
+        `/expense/user/${logindata.ValidUserOne._id}`,
+        { month: selectedMonth, year: selectedYear },
+        { ttl: 5 * 60 * 1000 }
+      );
+      const incomeData = await cachedGet(
+        `/income/user/${logindata.ValidUserOne._id}`,
+        { month: selectedMonth, year: selectedYear },
+        { ttl: 5 * 60 * 1000 }
+      );
 
-      const expensesThisMonth = expenseData.filter((exp) => isInPeriod(exp.date));
-      const incomeThisMonth = incomeData.filter((inc) => isInPeriod(inc.date));
+      const expensesThisMonth = expenseData;
+      const incomeThisMonth = incomeData;
 
       // Calculate previous month data for comparison
       const prevMonth = selectedMonth === 1 ? 12 : selectedMonth - 1;
       const prevYear = selectedMonth === 1 ? selectedYear - 1 : selectedYear;
-      const isPrevPeriod = (dateStr) => {
-        const d = new Date(dateStr);
-        return d.getMonth() + 1 === prevMonth && d.getFullYear() === prevYear;
-      };
 
-      const expensesPrevMonth = expenseData.filter((exp) => isPrevPeriod(exp.date));
-      const incomePrevMonth = incomeData.filter((inc) => isPrevPeriod(inc.date));
+      // Fetch previous month data separately
+      const expensePrevData = await cachedGet(
+        `/expense/user/${logindata.ValidUserOne._id}`,
+        { month: prevMonth, year: prevYear },
+        { ttl: 5 * 60 * 1000 }
+      );
+      const incomePrevData = await cachedGet(
+        `/income/user/${logindata.ValidUserOne._id}`,
+        { month: prevMonth, year: prevYear },
+        { ttl: 5 * 60 * 1000 }
+      );
+
+      const expensesPrevMonth = expensePrevData;
+      const incomePrevMonth = incomePrevData;
 
       const prevMonthStats = {
         totalExpense: expensesPrevMonth.reduce((sum, e) => sum + e.amount, 0),

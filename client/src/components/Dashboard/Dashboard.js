@@ -292,30 +292,18 @@ const Dashboard = () => {
 
           const expenseData = await cachedGet(
             `/expense/useracc/${userId}/${acc}`,
-            {},
+            { month: selectedMonth, year: selectedYear },
             { ttl: 2 * 60 * 1000 }
           );
           const totalExpense = expenseData
-            .filter((expense) => {
-              const d = new Date(expense.date);
-              return (
-                d.getMonth() + 1 === selectedMonth && d.getFullYear() === selectedYear
-              );
-            })
             .reduce((sum, expense) => sum + expense.amount, 0);
 
           const incomeData = await cachedGet(
             `/income/useracc/${userId}/${acc}`,
-            {},
+            { month: selectedMonth, year: selectedYear },
             { ttl: 2 * 60 * 1000 }
           );
           const totalIncome = incomeData
-            .filter((income) => {
-              const d = new Date(income.date);
-              return (
-                d.getMonth() + 1 === selectedMonth && d.getFullYear() === selectedYear
-              );
-            })
             .reduce((sum, income) => sum + income.amount, 0);
 
           const difference = totalIncome - totalExpense;
@@ -362,19 +350,22 @@ const Dashboard = () => {
         return;
       }
 
-      const expenseData = await cachedGet(`/expense/user/${userId}`, {}, { ttl: 5 * 60 * 1000 });
-      const incomeData = await cachedGet(`/income/user/${userId}`, {}, { ttl: 5 * 60 * 1000 });
+      const expenseData = await cachedGet(
+        `/expense/user/${userId}`,
+        { month: selectedMonth, year: selectedYear },
+        { ttl: 5 * 60 * 1000 }
+      );
+      const incomeData = await cachedGet(
+        `/income/user/${userId}`,
+        { month: selectedMonth, year: selectedYear },
+        { ttl: 5 * 60 * 1000 }
+      );
 
       setAllExpenseData(expenseData);
       setAllIncomeData(incomeData);
 
-      const isInPeriod = (dateStr) => {
-        const d = new Date(dateStr);
-        return d.getMonth() + 1 === selectedMonth && d.getFullYear() === selectedYear;
-      };
-
-      const filteredExpenses = expenseData.filter((exp) => isInPeriod(exp.date));
-      const filteredIncome = incomeData.filter((inc) => isInPeriod(inc.date));
+      const filteredExpenses = expenseData;
+      const filteredIncome = incomeData;
 
       const totalExpense = filteredExpenses.reduce(
         (sum, expense) => sum + expense.amount,
