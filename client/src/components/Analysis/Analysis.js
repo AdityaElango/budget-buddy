@@ -5,6 +5,10 @@ import { DateContext, LoginContext } from "../Context/Context";
 import { exportMonthlySummary } from "../../utils/exportUtils";
 import { API_BASE_URL, cachedGet } from "../../api/api";
 import { detectAnomalies, generateAnomalyInsights, compareMonths } from "../../utils/anomalyDetection";
+import { generateMonthlyInsights, generateBudgetAlerts, analyzeRecurringTransactions } from "../../utils/insightsGenerator";
+import InsightsCard from "../Insights/Insights";
+import BudgetAlerts from "../BudgetAlerts/BudgetAlerts";
+import RecurringAnalysis from "../RecurringAnalysis/RecurringAnalysis";
 import {
   LineChart,
   Line,
@@ -23,7 +27,7 @@ import {
 
 const chartColors = ["#2563eb", "#16a34a", "#f59e0b", "#dc2626", "#7c3aed", "#0ea5e9", "#ea580c", "#22c55e", "#475569", "#9ca3af"];
 
-const ExpenseAnalysis = ({ data, totalIncome, totalExpense, totalBalance, monthLabel, selectedYear, categoryData, weeklyData, onDownloadSummary, prevMonthData, anomalies }) => {
+const ExpenseAnalysis = ({ data, totalIncome, totalExpense, totalBalance, monthLabel, selectedYear, categoryData, weeklyData, onDownloadSummary, prevMonthData, anomalies, monthlyInsights = [], budgetAlerts = [], recurringAnalysis = {} }) => {
   // Determine trend indicators
   const avgExpense = data.length > 0 ? data.reduce((sum, d) => sum + d.expenses, 0) / data.length : 0;
   const latestExpense = data.length > 0 ? data[data.length - 1].expenses : 0;
@@ -92,7 +96,8 @@ const ExpenseAnalysis = ({ data, totalIncome, totalExpense, totalBalance, monthL
     return insights;
   };
 
-  const insights = generateInsights();
+  // Use passed monthlyInsights or fallback to generated insights
+  const insights = monthlyInsights.length > 0 ? monthlyInsights.map(i => i.text) : generateInsights();
 
   return (
     <div className='main_a'>
@@ -345,9 +350,20 @@ const ExpenseAnalysis = ({ data, totalIncome, totalExpense, totalBalance, monthL
       {/* Row 3 - Insights Section */}
       <div className='summary'>
         <div className='a_headings'>
-          <h1>Financial Insights</h1>
-          <p>Analysis of your spending and saving patterns</p>
+          <h1>Smart Insights & Alerts</h1>
+          <p>AI-powered analysis of your financial patterns</p>
         </div>
+
+        {/* Monthly Insights */}
+        <InsightsCard insights={monthlyInsights} title="Monthly Insights" />
+
+        {/* Budget Alerts */}
+        {budgetAlerts.length > 0 && (
+          <BudgetAlerts alerts={budgetAlerts} title="Budget Status" />
+        )}
+
+        {/* Recurring Transaction Analysis */}
+        <RecurringAnalysis analysis={recurringAnalysis} title="Recurring Commitments" />
 
         {insights.length > 0 ? (
           <ul className='insights-list'>
@@ -382,6 +398,11 @@ const Analysis = () => {
   const [incomeThisMonth, setIncomeThisMonth] = useState([]);
   const [prevMonthData, setPrevMonthData] = useState(null);
   const [anomalies, setAnomalies] = useState([]);
+  const [budgets, setBudgets] = useState([]);
+  const [recurring, setRecurring] = useState([]);
+  const [monthlyInsights, setMonthlyInsights] = useState([]);
+  const [budgetAlerts, setBudgetAlerts] = useState([]);
+  const [recurringAnalysis, setRecurringAnalysis] = useState({});
 
   const authHeaders = () => ({
     "Content-Type": "application/json",
@@ -503,6 +524,44 @@ const Analysis = () => {
       setTotalIncome(totalIncome);
       setTotalExpense(totalExpense);
       setTotalBalance(totalBalance);
+
+      // Fetch budgets and recurring data for insights
+      try {
+        const userId = logindata.ValidUserOne._id;
+        const budgetsData = await cachedGet(`/budget/user/${userId}`, {}, { ttl: 10 * 60 * 1000 });
+        const recurringData = await cachedGet(`/recurring/user/${userId}`, {}, { ttl: 10 * 60 * 1000 });
+
+        // Enrich budgets with spending data
+        const enrichedBudgets = budgetsData.map((budget) => {
+          const spent = expensesThisMonth
+            .filter((exp) => exp.category === budget.category)
+            .reduce((sum, exp) => sum + exp.amount, 0);
+          return { ...budget, spent, limit: budget.budget };
+        });
+
+        setBudgets(enrichedBudgets);
+        setRecurring(recurringData || []);
+
+        // Generate insights
+        const insights = generateMonthlyInsights(
+          expensesThisMonth,
+          incomeThisMonth,
+          expensesPrevMonth,
+          incomePrevMonth,
+          enrichedBudgets
+        );
+        setMonthlyInsights(insights);
+
+        // Generate budget alerts
+        const alerts = generateBudgetAlerts(enrichedBudgets);
+        setBudgetAlerts(alerts);
+
+        // Analyze recurring transactions
+        const analysis = analyzeRecurringTransactions(recurringData || [], expensesThisMonth);
+        setRecurringAnalysis(analysis);
+      } catch (error) {
+        console.error("Error fetching insights data:", error);
+      }
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
@@ -542,6 +601,9 @@ const Analysis = () => {
       onDownloadSummary={handleDownloadSummary}
       prevMonthData={prevMonthData}
       anomalies={anomalies}
+      insights={monthlyInsights}
+      budgetAlerts={budgetAlerts}
+      recurringAnalysis={recurringAnalysis}
     />
   );
 };

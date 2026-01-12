@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DateContext, LoginContext } from "../Context/Context";
 import { ToastContext } from "../Toast/ToastProvider";
 import { exportTransactions } from "../../utils/exportUtils";
 import { API_BASE_URL } from "../../api/api";
+import EmptyState from "../Common/EmptyState";
 import "./transaction.css";
 
 const API_BASE = API_BASE_URL;
@@ -85,6 +86,7 @@ const Transaction = () => {
   const [tagFilter, setTagFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("All");
   const [showFilters, setShowFilters] = useState(false);
+  const formRef = useRef(null);
   const parseTags = (value) =>
     value
       .split(",")
@@ -618,24 +620,30 @@ const Transaction = () => {
             </tbody>
           </table>
         ) : (
-          <div className="empty-state">
-            <p>📄</p>
-            {hasAnyTransactions ? (
-              <>
-                <p>No transactions match your filters.</p>
-                <p>Try adjusting filters or search.</p>
-              </>
-            ) : (
-              <>
-                <p>No transactions yet.</p>
-                <p>Add your first transaction to see it here.</p>
-              </>
-            )}
-          </div>
+          <EmptyState
+            title={hasAnyTransactions ? "No transactions match your filters" : "No transactions yet"}
+            description={hasAnyTransactions ? "Try adjusting filters or clearing search to see more results." : "Start by adding your first expense or income."}
+            actionLabel="+ Add Transaction"
+            onAction={() => {
+              setShowForm(true);
+              formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            secondaryLabel={hasAnyTransactions ? "Clear filters" : undefined}
+            onSecondary={hasAnyTransactions ? () => {
+              setCategoryFilter("All");
+              setAccountFilter("All");
+              setSearchTerm("");
+              setTagFilter("");
+              setTypeFilter("All");
+              setMinAmount("");
+              setMaxAmount("");
+            } : undefined}
+            illustration={hasAnyTransactions ? "?" : "+"}
+          />
         )}
       </div>
 
-      <div className="form_sheet">
+      <div className="form_sheet" ref={formRef}>
         <div className="form_header">
           <div>
             <h1>Add Transaction</h1>

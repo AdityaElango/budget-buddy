@@ -10,11 +10,32 @@ import { addExpense as addExpenseApi } from "../../api/expenseApi";
 import { addIncome as addIncomeApi } from "../../api/incomeApi";
 import { getHealthScore as getHealthScoreApi } from "../../api/healthApi";
 import { API_BASE_URL, cachedGet } from "../../api/api";
+import { SkeletonCard, SkeletonList, SkeletonHero } from "../Common/Skeleton";
 
 const authHeaders = () => ({
   "Content-Type": "application/json",
   Authorization: localStorage.getItem("usersdatatoken") || "",
 });
+
+const DashboardSkeleton = () => {
+  return (
+    <div className="dashboard-skeleton">
+      <SkeletonHero />
+      <div className="metric-grid">
+        {[...Array(4)].map((_, idx) => (
+          <SkeletonCard key={idx} lines={3} accent={idx === 0} />
+        ))}
+      </div>
+      <div className="section">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+          <div className="skeleton skeleton-line skeleton-md w-30" />
+          <div className="skeleton skeleton-line skeleton-sm w-20" />
+        </div>
+        <SkeletonList rows={6} />
+      </div>
+    </div>
+  );
+};
 
 const Dashboard = () => {
   const getToday = () => new Date().toISOString().split("T")[0];
@@ -461,6 +482,10 @@ const Dashboard = () => {
     exportMonthlySummary(filteredIncome, filteredExpenses, accountBalances, monthLabel, selectedYear);
     showToast("Monthly summary exported", "success");
   };
+
+  if (initialLoading) {
+    return <DashboardSkeleton />;
+  }
 
   return (
     <div className="dash">

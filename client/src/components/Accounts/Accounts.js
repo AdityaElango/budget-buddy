@@ -1,10 +1,11 @@
-import React, { useState,useEffect, useContext, useMemo } from "react";
+import React, { useState,useEffect, useContext, useMemo, useRef } from "react";
 import { PieChart, Pie,  Legend ,Cell} from "recharts";
 import "./Accounts.css";
 import { useNavigate } from "react-router-dom";
 import { DateContext, LoginContext } from "../Context/Context";
 import { ToastContext } from "../Toast/ToastProvider";
 import { API_BASE_URL } from "../../api/api";
+import EmptyState from "../Common/EmptyState";
 
 const Accounts = () => {
   const history = useNavigate();
@@ -21,6 +22,7 @@ const Accounts = () => {
   const [accountType, setAccountType] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const formRef = useRef(null);
 
   const validateForm = () => {
     const newErrors = {};
@@ -342,16 +344,21 @@ const Accounts = () => {
               </tbody>
             </table>
           ) : (
-            <div className="empty-state">
-              <p style={{ margin: '4px 0' }}>No transactions yet.</p>
-              <p style={{ margin: '4px 0' }}>Add transactions to see them here.</p>
-            </div>
+            <EmptyState
+              title="No transactions yet"
+              description="Start by adding your first expense or income to see account insights here."
+              actionLabel="+ Add Transaction"
+              onAction={() => {
+                formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              illustration="*"
+            />
           )}
         </div>
       </div>
 
       {/* Setup Section */}
-      <div className="form-section">
+      <div className="form-section" ref={formRef}>
         <div className="form_datas">
           <h2>Update Balances</h2>
           <p className="section-subtitle">Adjust which account to view and refresh numbers.</p>
