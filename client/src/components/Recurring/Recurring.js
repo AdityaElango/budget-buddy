@@ -166,11 +166,21 @@ const Recurring = () => {
         headers: authHeaders(),
         body: JSON.stringify({ isActive: !currentStatus }),
       });
-      if (!response.ok) throw new Error("Failed to update");
-      showToast("Status updated", "success");
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to update");
+      }
+      
+      showToast(
+        currentStatus ? "Transaction paused" : "Transaction resumed",
+        "success"
+      );
       fetchRecurring();
     } catch (error) {
-      showToast(error.message || "Error updating", "error");
+      console.error("Toggle error:", error);
+      showToast(error.message || "Error updating status", "error");
     }
   };
 

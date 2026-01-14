@@ -1,4 +1,4 @@
-import React, { useState, useEffect,  useContext  } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import "./Budget.css"; // Import your custom CSS file
 import { useNavigate } from "react-router-dom";
 import { DateContext, LoginContext } from "../Context/Context";
@@ -24,6 +24,7 @@ const Budget = () => {
   const { showToast } = useContext(ToastContext);
   const { selectedMonth, selectedYear } = useContext(DateContext);
   const history = useNavigate();
+  const formRef = useRef(null);
 
   const [formData, setFormData] = useState({
     category: "",
@@ -235,7 +236,7 @@ const Budget = () => {
   return (
     <div className="container">
       {/* LEFT COLUMN - Set Budget Form (30%) */}
-      <div className="set_budget">
+      <div className="set_budget" ref={formRef}>
         <div className="heading">
           <h1>Monthly Budget</h1>
           <p>Set monthly budget limits for categories</p>
@@ -391,7 +392,7 @@ const Budget = () => {
             <p>📊</p>
             <p>No budgets set yet.</p>
             <p>Start by setting a monthly budget for a category.</p>
-            <button className="btn" type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+            <button className="btn" type="button" onClick={() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}>
               Add a budget
             </button>
           </div>
