@@ -1,0 +1,377 @@
+/* 
+ * Mobile-Only Improvements for BudgetBuddy
+ * These styles ONLY apply to mobile devices (max-width: 768px)
+ * Desktop styles remain unchanged
+ */
+
+/* ============ GLOBAL MOBILE IMPROVEMENTS ============ */
+@media (max-width: 768px) {
+  /* Better touch targets */
+  button,
+  .btn,
+  a.btn,
+  input[type="submit"] {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    padding: 12px 16px !important;
+    font-size: 15px !important;
+  }
+
+  /* Form inputs - easier to tap */
+  input,
+  select,
+  textarea {
+    min-height: 48px !important;
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    padding: 12px 14px !important;
+  }
+
+  /* Better spacing */
+  .main_c {
+    padding: 12px !important;
+  }
+
+  /* Card spacing */
+  .card,
+  .form_datas,
+  .piechart,
+  .total {
+    margin-bottom: 16px !important;
+    padding: 16px !important;
+  }
+
+  /* Typography - better readability */
+  h1 {
+    font-size: 24px !important;
+  }
+
+  h2 {
+    font-size: 20px !important;
+  }
+
+  h3 {
+    font-size: 18px !important;
+  }
+
+  p {
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Tables - horizontal scroll with sticky header */
+  .table_box {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 8px !important;
+  }
+
+  table {
+    min-width: 600px !important;
+    font-size: 14px !important;
+  }
+
+  thead {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: var(--bg-primary) !important;
+  }
+
+  /* Charts - better sizing */
+  .piechart {
+    text-align: center !important;
+    overflow: hidden !important;
+  }
+
+  /* Navigation - easier to use */
+  nav a,
+  .nav-link {
+    padding: 14px 16px !important;
+    font-size: 15px !important;
+  }
+
+  /* Modal/Dialog improvements */
+  .modal,
+  .dialog {
+    width: 95% !important;
+    max-width: 95% !important;
+    margin: 10px auto !important;
+  }
+
+  /* Bottom padding for mobile keyboards */
+  form {
+    padding-bottom: 60px !important;
+  }
+
+  /* Floating action button style for primary actions */
+  .quick-add-fab {
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    z-index: 1000 !important;
+    width: 56px !important;
+    height: 56px !important;
+    border-radius: 50% !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  }
+}
+
+/* ============ COMPONENT-SPECIFIC MOBILE IMPROVEMENTS ============ */
+
+/* Dashboard Mobile */
+@media (max-width: 768px) {
+  .charts-row {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .health-score-card {
+    margin: 16px 0 !important;
+  }
+
+  .health-breakdown {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .insights-cards {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .insight-card {
+    padding: 14px !important;
+  }
+}
+
+/* Transaction Form Mobile */
+@media (max-width: 768px) {
+  .form_inputs {
+    gap: 14px !important;
+  }
+
+  .two {
+    grid-template-columns: 1fr !important;
+  }
+
+  .Form-button {
+    padding: 12px 20px !important;
+    font-size: 15px !important;
+  }
+}
+
+/* Accounts Page Mobile */
+@media (max-width: 768px) {
+  .accounts-top-row {
+    flex-direction: column !important;
+  }
+
+  .balance-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .balance-item {
+    padding: 14px !important;
+  }
+}
+
+/* Budget Page Mobile */
+@media (max-width: 768px) {
+  .budget-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .budget-card {
+    padding: 16px !important;
+  }
+}
+
+/* Goals Page Mobile */
+@media (max-width: 768px) {
+  .goals-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  .goal-card {
+    padding: 16px !important;
+  }
+
+  .goal-actions {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .goal-actions button {
+    flex: 1 1 calc(50% - 8px) !important;
+  }
+}
+
+/* Header Mobile - Better navigation */
+@media (max-width: 768px) {
+  .header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
+    backdrop-filter: blur(10px) !important;
+    background: var(--bg-primary) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .nav-links {
+    gap: 8px !important;
+  }
+
+  .nav-links a {
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+    border-radius: 8px !important;
+  }
+
+  .nav-links a.active {
+    background: var(--primary-color) !important;
+    color: white !important;
+  }
+}
+
+/* Toast notifications - mobile position */
+@media (max-width: 768px) {
+  .toast {
+    bottom: 20px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 32px) !important;
+    max-width: 400px !important;
+  }
+}
+
+/* Loading states - mobile */
+@media (max-width: 768px) {
+  .loader,
+  .skeleton {
+    margin: 20px 0 !important;
+  }
+}
+
+/* Empty states - mobile friendly */
+@media (max-width: 768px) {
+  .empty-state {
+    padding: 32px 20px !important;
+  }
+
+  .empty-state-icon {
+    font-size: 48px !important;
+  }
+
+  .empty-state h3 {
+    font-size: 18px !important;
+    margin: 12px 0 !important;
+  }
+
+  .empty-state p {
+    font-size: 14px !important;
+  }
+}
+
+/* PWA Install prompt - mobile */
+@media (max-width: 768px) {
+  .install-prompt {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: var(--bg-primary) !important;
+    padding: 16px !important;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15) !important;
+    z-index: 1000 !important;
+    border-radius: 12px 12px 0 0 !important;
+  }
+
+  .install-prompt-actions {
+    display: flex !important;
+    gap: 12px !important;
+    margin-top: 12px !important;
+  }
+
+  .install-prompt-actions button {
+    flex: 1 !important;
+  }
+}
+
+/* Pull to refresh indicator */
+@media (max-width: 768px) {
+  body {
+    overscroll-behavior-y: contain !important;
+  }
+
+  .pull-to-refresh {
+    position: fixed !important;
+    top: 60px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    background: var(--bg-primary) !important;
+    padding: 8px 16px !important;
+    border-radius: 20px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    z-index: 1001 !important;
+    opacity: 0 !important;
+    transition: opacity 0.3s !important;
+  }
+
+  .pull-to-refresh.visible {
+    opacity: 1 !important;
+  }
+}
+
+/* Safe area for notch devices */
+@media (max-width: 768px) {
+  body {
+    padding-top: env(safe-area-inset-top) !important;
+    padding-bottom: env(safe-area-inset-bottom) !important;
+  }
+
+  .header {
+    padding-top: calc(12px + env(safe-area-inset-top)) !important;
+  }
+
+  .main_c {
+    padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* Better dark mode on mobile */
+@media (max-width: 768px) {
+  body.dark-mode {
+    background: #0f172a !important;
+  }
+
+  body.dark-mode .card,
+  body.dark-mode .form_datas {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+  }
+}
+
+/* Swipe gestures indicator */
+@media (max-width: 768px) {
+  .swipeable {
+    touch-action: pan-y !important;
+    user-select: none !important;
+  }
+
+  .swipe-indicator {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    opacity: 0.5 !important;
+    pointer-events: none !important;
+  }
+
+  .swipe-indicator.left {
+    left: -40px !important;
+  }
+
+  .swipe-indicator.right {
+    right: -40px !important;
+  }
+}

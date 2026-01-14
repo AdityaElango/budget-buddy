@@ -16,6 +16,8 @@ import Goals from "./components/Goals/Goals";
 import Profile from "./components/Profile/Profile";
 import Error from "./components/Error"
 import ProtectedRoute from "./components/Common/ProtectedRoute";
+import InstallPrompt from "./components/Common/InstallPrompt";
+import OfflineIndicator from "./components/Common/OfflineIndicator";
 import { LoginContext } from "./components/Context/Context";
 
 // Page transition animation variants
@@ -194,6 +196,8 @@ function App() {
         }/>
       </Routes>
     </AnimatePresence>
+    <OfflineIndicator />
+    <InstallPrompt />
     </>
   );
 }
